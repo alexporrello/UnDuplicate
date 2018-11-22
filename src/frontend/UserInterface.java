@@ -3,6 +3,7 @@ package frontend;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
@@ -60,6 +61,8 @@ public class UserInterface extends JFrame {
 		public Settings settingsMenu = new Settings();
 		
 		public UnDiplicateMenu() {
+			setBorder(BorderFactory.createEmptyBorder());
+			
 			add(settingsMenu);
 		}
 		
