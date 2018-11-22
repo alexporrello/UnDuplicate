@@ -6,16 +6,22 @@ import java.util.HashSet;
 
 public class UnDuplicate {
 
-	HashMap<String, ArrayList<String>> matches = new HashMap<String, ArrayList<String>>();
+	private HashMap<String, ArrayList<String>> matches = new HashMap<String, ArrayList<String>>();
 
-	HashSet<String> checked = new HashSet<String>();
-
-	public UnDuplicate(String input) {
-		findDuplicates(input);
-	}
+	private HashSet<String> checked = new HashSet<String>();
 	
-	public String findDuplicates(String input) {
-		String[] split = input.split("\n|\\.");
+	/**
+	 * Locates duplicate text in a given string.
+	 * @param input the input string to be checked for duplicates
+	 * @param desiredSimilarity number used to compute duplicate text; higher value = less similar.
+	 * @param delims
+	 */
+	public UnDuplicate(String input, int desiredSimilarity, Delimiter[] delims) {
+		findDuplicates(input, desiredSimilarity, combineDelims(delims));
+	}
+
+	public String findDuplicates(String input, int desiredSimilarity, String delims) {
+		String[] split = input.split(delims);
 
 		for(int j = 0; j < split.length; j++) {
 
@@ -24,12 +30,12 @@ public class UnDuplicate {
 			for(int k = 0; k < split.length; k++) {
 				if(j != k) {
 					if(!hashed(j, k)){
-						if(split[j].length() > 15 && split[k].length() > 15) {
-							if(StringUtils.computeLevenshteinDistance(split[j], split[k]) < 5) {		
+						if(split[j].length() > 10 && split[k].length() > 10) {
+							if(StringUtils.computeLevenshteinDistance(split[j], split[k]) < desiredSimilarity) {		
 								if(!matches.containsKey(split[j])) {
 									matches.put(split[j], new ArrayList<String>());
 								}
-								
+
 								matches.get(split[j]).add(split[k].trim());
 							}
 						}
@@ -39,32 +45,47 @@ public class UnDuplicate {
 		}
 
 		String output = "";
-		
+
 		for(String s : matches.keySet()) {
 			String thisLine = "\"" + s + "\"" + "," + (matches.get(s).size() + 1);
-			
+
 			output = thisLine + "\n" + output;
 		}
-		
+
 		System.out.println(output);
 
 		return output;
 	}
-
+	
 	public boolean hashed(int j, int k) {
-		String toReturn;
-		
+		String hashedValue;
+
 		if(j < k) {
-			toReturn = j + "," + k;
+			hashedValue = j + "," + k;
 		} else {
-			toReturn = k + "," + j;
+			hashedValue = k + "," + j;
 		}
-		
-		if(checked.contains(toReturn)) {
+
+		if(checked.contains(hashedValue)) {
 			return true;
 		} else {
-			checked.add(toReturn);
+			checked.add(hashedValue);
 			return false;
 		}
+	}
+	
+	/**
+	 * Combines a given array of Delimeters for splitting a string.
+	 * @param delims the given array of Delimiters
+	 * @return a string for splitting.
+	 */
+	private String combineDelims(Delimiter[] delims) {
+		String delim = "";
+
+		for(Delimiter d : delims) {
+			delim = delim + "|" + d.delim;
+		}
+		
+		return delim.substring(1, delim.length());
 	}
 }

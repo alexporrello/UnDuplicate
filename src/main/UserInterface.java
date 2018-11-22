@@ -16,6 +16,8 @@ public class UserInterface extends JFrame {
 	
 	JTextArea input = new JTextArea();
 	
+	Delimiter[] delims = {Delimiter.NEW_LINE, Delimiter.PERIOD};
+	
 	public UserInterface() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(450, 450);
@@ -29,7 +31,7 @@ public class UserInterface extends JFrame {
 		add(scroll, BorderLayout.CENTER);
 
 		button.addActionListener(e -> {
-			new UnDuplicate(input.getText());
+			new UnDuplicate(input.getText(), 5, delims);
 		});
 		add(button, BorderLayout.SOUTH);
 		
