@@ -1,4 +1,4 @@
-package main;
+package backend;
 
 public class StringUtils {
 	public static int computeLevenshteinDistance(CharSequence lhs, CharSequence rhs) {                          

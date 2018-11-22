@@ -1,4 +1,4 @@
-package main;
+package frontend;
 
 import java.awt.BorderLayout;
 
@@ -6,8 +6,9 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+
+import backend.Delimiter;
+import backend.UnDuplicate;
 
 public class UserInterface extends JFrame {
 	private static final long serialVersionUID = -9021319552711782577L;
@@ -36,20 +37,5 @@ public class UserInterface extends JFrame {
 		add(button, BorderLayout.SOUTH);
 		
 		setVisible(true);
-	}
-	
-	public static void setLookAndFeel() {
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException | InstantiationException
-				| IllegalAccessException | UnsupportedLookAndFeelException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public static void main(String[] args) {
-		setLookAndFeel();
-		
-		new UserInterface();
 	}
 }
