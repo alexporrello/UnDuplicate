@@ -32,7 +32,7 @@ public class UserInterface extends JFrame {
 		add(scroll, BorderLayout.CENTER);
 
 		button.addActionListener(e -> {
-			new UnDuplicate(input.getText(), 5, delims);
+			new UnDuplicate(input.getText(), 5, 10, delims);
 		});
 		add(button, BorderLayout.SOUTH);
 		

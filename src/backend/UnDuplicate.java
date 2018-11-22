@@ -10,17 +10,25 @@ public class UnDuplicate {
 
 	private HashSet<String> checked = new HashSet<String>();
 	
+	private int desiredSimilarity;
+	
+	private int minCompareLength;
+	
 	/**
 	 * Locates duplicate text in a given string.
 	 * @param input the input string to be checked for duplicates
 	 * @param desiredSimilarity number used to compute duplicate text; higher value = less similar.
-	 * @param delims
+	 * @param minCompareLength the minimum character length of a comparison.
+	 * @param delims the Delimiters that will be used to split the input.
 	 */
-	public UnDuplicate(String input, int desiredSimilarity, Delimiter[] delims) {
-		findDuplicates(input, desiredSimilarity, combineDelims(delims));
+	public UnDuplicate(String input, int desiredSimilarity, int minCompareLength, Delimiter[] delims) {
+		this.desiredSimilarity = desiredSimilarity;
+		this.minCompareLength  = minCompareLength;
+		
+		findDuplicates(input, combineDelims(delims));
 	}
 
-	public String findDuplicates(String input, int desiredSimilarity, String delims) {
+	public String findDuplicates(String input, String delims) {
 		String[] split = input.split(delims);
 
 		for(int j = 0; j < split.length; j++) {
@@ -30,7 +38,7 @@ public class UnDuplicate {
 			for(int k = 0; k < split.length; k++) {
 				if(j != k) {
 					if(!hashed(j, k)){
-						if(split[j].length() > 10 && split[k].length() > 10) {
+						if(split[j].length() > minCompareLength && split[k].length() > minCompareLength) {
 							if(StringUtils.computeLevenshteinDistance(split[j], split[k]) < desiredSimilarity) {		
 								if(!matches.containsKey(split[j])) {
 									matches.put(split[j], new ArrayList<String>());
