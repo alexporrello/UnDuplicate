@@ -1,6 +1,8 @@
 package backend;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -9,6 +11,8 @@ public class UnDuplicate {
 	private HashMap<String, ArrayList<String>> matches = new HashMap<String, ArrayList<String>>();
 
 	private HashSet<String> checked = new HashSet<String>();
+	
+	private ArrayList<Match> allMatches;
 	
 	private int desiredSimilarity;
 	
@@ -25,10 +29,16 @@ public class UnDuplicate {
 		this.desiredSimilarity = desiredSimilarity;
 		this.minCompareLength  = minCompareLength;
 		
-		findDuplicates(input, combineDelims(delims));
+		allMatches = findDuplicates(input, combineDelims(delims));
+		
+		Collections.sort(allMatches);
+		
+		for(Match m : allMatches) {
+			System.out.println(m);
+		}
 	}
 
-	public String findDuplicates(String input, String delims) {
+	public ArrayList<Match> findDuplicates(String input, String delims) {
 		String[] split = input.split(delims);
 
 		for(int j = 0; j < split.length; j++) {
@@ -52,17 +62,13 @@ public class UnDuplicate {
 			}
 		}
 
-		String output = "";
-
+		ArrayList<Match> allMatches = new ArrayList<Match>();
+		
 		for(String s : matches.keySet()) {
-			String thisLine = "\"" + s + "\"" + "," + (matches.get(s).size() + 1);
-
-			output = thisLine + "\n" + output;
+			allMatches.add(new Match(s, matches.get(s)));
 		}
 
-		System.out.println(output);
-
-		return output;
+		return allMatches;
 	}
 	
 	public boolean hashed(int j, int k) {
@@ -95,5 +101,45 @@ public class UnDuplicate {
 		}
 		
 		return delim.substring(1, delim.length());
+	}
+	
+	/**
+	 * A match contains the original string and all of its matches in an ArrayList.
+	 * @author Alexander Porrello
+	 */
+	public class Match implements Comparable<Match> {
+		
+		public ArrayList<String> matches;
+		
+		public String searchedOn;
+		
+		public Match(String searchedOn, ArrayList<String> matches) {
+			this.matches = matches;
+			this.searchedOn = searchedOn;
+		}
+		
+		public int getNumMatches() {
+			return matches.size();
+		}
+		
+		@Override
+		public String toString() {
+			String toReturn = getNumMatches() + "\t" + searchedOn;
+			
+			String otherOccurences = "";
+			
+			for(String s : matches) {
+				if(!s.equals(searchedOn)) {
+					otherOccurences = otherOccurences + "\n\t\t" + s;
+				}
+			}
+			
+			return toReturn + otherOccurences;
+		}
+
+		@Override
+		public int compareTo(Match o) {
+			return (Integer.valueOf(o.matches.size())).compareTo(Integer.valueOf(matches.size()));
+		}
 	}
 }
