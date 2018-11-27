@@ -1,7 +1,6 @@
 package backend;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -124,12 +123,12 @@ public class UnDuplicate {
 		
 		@Override
 		public String toString() {
-			String toReturn = getNumMatches() + "\t" + searchedOn;
+			String toReturn = searchedOn.trim();
 			
 			String otherOccurences = "";
 			
 			for(String s : matches) {
-				if(!s.equals(searchedOn)) {
+				if(!s.trim().equals(searchedOn.trim())) {
 					otherOccurences = otherOccurences + "\n\t\t" + s;
 				}
 			}
