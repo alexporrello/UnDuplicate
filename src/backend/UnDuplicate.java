@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import frontend.ResultsDialog;
+
 public class UnDuplicate {
 
 	private HashMap<String, ArrayList<String>> matches = new HashMap<String, ArrayList<String>>();
@@ -32,9 +34,15 @@ public class UnDuplicate {
 		
 		Collections.sort(allMatches);
 		
+		String toDisplay = "";
+		
 		for(Match m : allMatches) {
+			toDisplay = toDisplay + m + "\n";
+			
 			System.out.println(m);
 		}
+		
+		new ResultsDialog(toDisplay);
 	}
 
 	public ArrayList<Match> findDuplicates(String input, String delims) {
