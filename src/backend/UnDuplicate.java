@@ -5,18 +5,25 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import frontend.ResultsDialog;
+import frontend.ResultsWindow;
 
 public class UnDuplicate {
 
-	private HashMap<String, ArrayList<String>> matches = new HashMap<String, ArrayList<String>>();
-
+	/** Contains all of the array pairs that have been checked for duplicates. **/
 	private HashSet<String> checked = new HashSet<String>();
 	
+	/** Contains all of the found matches. **/
 	private ArrayList<Match> allMatches;
 	
+	/**
+	 * Determines the required level of similarity
+	 * that is required for two strings to be considered a "match."
+	 * The lower the given number, the closer in equality the two 
+	 * strings have to be in order to be considered a "match."
+	 */
 	private int desiredSimilarity;
 	
+	/** Only strings greater than the given length will be checked for duplicates. **/
 	private int minCompareLength;
 	
 	/**
@@ -30,24 +37,24 @@ public class UnDuplicate {
 		this.desiredSimilarity = desiredSimilarity;
 		this.minCompareLength  = minCompareLength;
 		
-		allMatches = findDuplicates(input, combineDelims(delims));
+		this.allMatches = findDuplicates(input, combineDelims(delims));
 		
 		Collections.sort(allMatches);
 		
-		String toDisplay = "";
-		
-		for(Match m : allMatches) {
-			toDisplay = toDisplay + m + "\n";
-			
-			System.out.println(m);
-		}
-		
-		new ResultsDialog(allMatches);
+		new ResultsWindow(allMatches);
 	}
 
+	/**
+	 * Compares all items in the arrays to one another. This could likely use some optimization.
+	 * @param input the input string to be checked for duplicates
+	 * @param delims the delimiters used to split the input
+	 * @return the results of the duplicate search.
+	 */
 	public ArrayList<Match> findDuplicates(String input, String delims) {
+		HashMap<String, ArrayList<String>> matches = new HashMap<String, ArrayList<String>>();
+		
 		String[] split = input.split(delims);
-
+		
 		for(int j = 0; j < split.length; j++) {
 
 			System.out.println("Completed: " + j + " of " + split.length);
@@ -78,6 +85,12 @@ public class UnDuplicate {
 		return allMatches;
 	}
 	
+	/**
+	 * Hashes all checked pairs.
+	 * @param j the location in array A
+	 * @param k the location in array B
+	 * @return true if the value has already been hashed; else, false.
+	 */
 	public boolean hashed(int j, int k) {
 		String hashedValue;
 
@@ -96,7 +109,7 @@ public class UnDuplicate {
 	}
 	
 	/**
-	 * Combines a given array of Delimeters for splitting a string.
+	 * Combines a given array of Delimiters for splitting a string.
 	 * @param delims the given array of Delimiters
 	 * @return a string for splitting.
 	 */

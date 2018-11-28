@@ -18,7 +18,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import frontend.ResultsDialog;
+import frontend.ResultsWindow;
 import main.UnDiplcateRunner;
 
 
@@ -39,7 +39,7 @@ public class FileManager {
 //		ImportFile();
 		UnDiplcateRunner.setLookAndFeel();
 		
-		new ResultsDialog(ImportFile());
+		new ResultsWindow(ImportFile());
 	}
 
 	public static ArrayList<Match> ImportFile() {

@@ -30,12 +30,12 @@ import jm.JMScrollPane;
 import jm.JMTextArea;
 import jm.JMTextField;
 
-public class ResultsDialog extends JFrame {
+public class ResultsWindow extends JFrame {
 	private static final long serialVersionUID = -6023620346742595500L;
 
 	private JMPanel insideScroll = new JMPanel();
 
-	public ResultsDialog(ArrayList<Match> matches) {
+	public ResultsWindow(ArrayList<Match> matches) {
 		insideScroll.setLayout(new GridBagLayout());
 
 		int y = 0;
