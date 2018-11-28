@@ -72,7 +72,7 @@ public class UnDuplicate {
 		ArrayList<Match> allMatches = new ArrayList<Match>();
 		
 		for(String s : matches.keySet()) {
-			allMatches.add(new Match(s, matches.get(s)));
+			allMatches.add(new Match(s, false, matches.get(s)));
 		}
 
 		return allMatches;

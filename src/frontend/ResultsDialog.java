@@ -17,18 +17,18 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import backend.FileManager;
 import backend.Match;
 import jm.JMButton;
 import jm.JMPanel;
 import jm.JMScrollPane;
 import jm.JMTextArea;
+import jm.JMTextField;
 
 public class ResultsDialog extends JFrame {
 	private static final long serialVersionUID = -6023620346742595500L;
@@ -47,11 +47,26 @@ public class ResultsDialog extends JFrame {
 				insideScroll.remove(match);
 				insideScroll.revalidate();
 				insideScroll.repaint();
+
+				match.match.hidden = true;
+				FileManager.ExportFile(matches);
 			});
 
-			insideScroll.add(match, new GridBagConstraints(0, y++, 1, 1, 1.0, 0.0, 
-					GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, 
-					new Insets(-1, 5, 0, 5), 0, 0));
+			insideScroll.add(match.matchNum,   new GridBagConstraints(0, y, 1, 1, 1.0, 0.0, 
+					GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(4, 2, 0, 1), 0, 0));
+			insideScroll.add(match.matchLabel, new GridBagConstraints(1, y, 1, 1, 1.0, 0.0, 
+					GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(4, 1, 0, 1), 0, 0));
+			insideScroll.add(match.delete,     new GridBagConstraints(2, y, 1, 1, 1.0, 0.0, 
+					GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(4, 1, 0, 2), 0, 0));
+
+			y++;
+
+			if(match.deviations != null) {
+				insideScroll.add(match.deviations, new GridBagConstraints(0, y, 3, 1, 1.0, 0.0, 
+						GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(4, 1, 0, 2), 0, 0));
+			}
+
+			y++;
 		}
 
 		add(setUpInput(), BorderLayout.CENTER);
@@ -73,7 +88,8 @@ public class ResultsDialog extends JFrame {
 		Match match;
 
 		JMTextArea matchLabel;
-		JLabel matchNum;
+
+		JMTextField matchNum;
 
 		JPanel deviations;
 
@@ -83,7 +99,7 @@ public class ResultsDialog extends JFrame {
 			this.match = match;
 
 			this.matchLabel = new JMTextArea(match.searchedOn.trim());
-			this.matchNum   = new JLabel(match.numMatches + "");
+			this.matchNum   = new JMTextField(match.numMatches + "");
 
 			this.matchLabel.setLineWrap(true);
 			this.matchLabel.setWrapStyleWord(true);
@@ -91,17 +107,11 @@ public class ResultsDialog extends JFrame {
 			this.matchLabel.setEditable(false);
 			this.matchLabel.setFont(new JLabel().getFont());
 
-			setBorder(matchLabel);
-			setBorder(matchNum);
+			this.matchNum.setEditable(false);
 
 			setLayout(new BorderLayout());
 
 			buildUI();
-		}
-
-		private void setBorder(JComponent jc) {
-			jc.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),
-					BorderFactory.createEmptyBorder(3, 3, 3, 3)));
 		}
 
 		public void buildUI() {
@@ -113,6 +123,7 @@ public class ResultsDialog extends JFrame {
 				deviations = makeDeviationsPanel();
 				add(deviations, BorderLayout.SOUTH);
 			} catch (Exception e) {
+				e.printStackTrace();
 				System.err.println("Deviations panel not added.");				
 			}
 
@@ -132,7 +143,7 @@ public class ResultsDialog extends JFrame {
 		}
 
 		public JPanel makeDeviationsPanel() throws Exception {
-			if(match.matches.size() > 1) {
+			if(match.matches.size() >= 1) {
 				JPanel deviationsPanel = new JPanel() {
 					private static final long serialVersionUID = 7154275559452566982L;
 

@@ -15,9 +15,12 @@ public class Match implements Comparable<Match> {
 	
 	public int numMatches;
 	
-	public Match(String searchedOn, ArrayList<String> matches) {
+	public boolean hidden;
+	
+	public Match(String searchedOn, Boolean hidden, ArrayList<String> matches) {
 		this.numMatches = matches.size();
 		this.searchedOn = searchedOn;
+		this.hidden     = hidden;
 		
 		for(String s : matches) {
 			this.matches.add(s.trim());
