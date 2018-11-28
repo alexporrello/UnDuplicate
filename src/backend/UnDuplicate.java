@@ -42,7 +42,7 @@ public class UnDuplicate {
 			System.out.println(m);
 		}
 		
-		new ResultsDialog(toDisplay);
+		new ResultsDialog(allMatches);
 	}
 
 	public ArrayList<Match> findDuplicates(String input, String delims) {
@@ -108,45 +108,5 @@ public class UnDuplicate {
 		}
 		
 		return delim.substring(1, delim.length());
-	}
-	
-	/**
-	 * A match contains the original string and all of its matches in an ArrayList.
-	 * @author Alexander Porrello
-	 */
-	public class Match implements Comparable<Match> {
-		
-		public ArrayList<String> matches;
-		
-		public String searchedOn;
-		
-		public Match(String searchedOn, ArrayList<String> matches) {
-			this.matches = matches;
-			this.searchedOn = searchedOn;
-		}
-		
-		public int getNumMatches() {
-			return matches.size();
-		}
-		
-		@Override
-		public String toString() {
-			String toReturn = searchedOn.trim();
-			
-			String otherOccurences = "";
-			
-			for(String s : matches) {
-				if(!s.trim().equals(searchedOn.trim())) {
-					otherOccurences = otherOccurences + "\n\t\t" + s;
-				}
-			}
-			
-			return toReturn + otherOccurences;
-		}
-
-		@Override
-		public int compareTo(Match o) {
-			return (Integer.valueOf(o.matches.size())).compareTo(Integer.valueOf(matches.size()));
-		}
 	}
 }

@@ -4,23 +4,24 @@ import java.awt.BorderLayout;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 import backend.Delimiter;
 import backend.UnDuplicate;
+import jm.JMButton;
+import jm.JMScrollPane;
+import jm.JMTextArea;
 
 public class UserInterface extends JFrame {
 	private static final long serialVersionUID = -9021319552711782577L;
 	
-	private JButton button = new JButton("Find Duplicates");
+	private JMButton button = new JMButton("Find Duplicates");
 	
-	private JTextArea input = new JTextArea();
+	private JMTextArea input = new JMTextArea();
 	
 	private UnDiplicateMenu menuBar = new UnDiplicateMenu();
 	
@@ -37,17 +38,16 @@ public class UserInterface extends JFrame {
 	}
 	
 	private JScrollPane setUpInput() {
-		JScrollPane scroll = new JScrollPane(input);
-		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		
-		input.setWrapStyleWord(true);
-		input.setLineWrap(true);
+		JMScrollPane scroll = new JMScrollPane(input);
+		scroll.setHorizontalScrollBarPolicy(JMScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
 		
 		return scroll;
 	}
 	
-	private JButton setUpButton() {
-		button = new JButton("Find Duplicates");
+	private JMButton setUpButton() {
+		button = new JMButton("Find Duplicates");
+		
 		button.addActionListener(e -> {
 			new UnDuplicate(input.getText(), 5, 10, menuBar.getSelectedDelims());
 		});
