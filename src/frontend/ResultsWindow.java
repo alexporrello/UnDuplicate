@@ -1,15 +1,10 @@
 package frontend;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -25,6 +20,7 @@ import javax.swing.JScrollPane;
 import backend.FileManager;
 import backend.Match;
 import jm.JMButton;
+import jm.JMFocusablePanel;
 import jm.JMPanel;
 import jm.JMScrollPane;
 import jm.JMTextArea;
@@ -41,32 +37,41 @@ public class ResultsWindow extends JFrame {
 		int y = 0;
 
 		for(Match m : matches) {
-			MatchUI match = new MatchUI(m);
+			if(!m.hidden) {
+				MatchUI match = new MatchUI(m);
 
-			match.delete.addActionListener(e -> {
-				insideScroll.remove(match);
-				insideScroll.revalidate();
-				insideScroll.repaint();
+				match.delete.addActionListener(e -> {
+					insideScroll.remove(match.matchNum);
+					insideScroll.remove(match.matchLabel);
+					insideScroll.remove(match.delete);
 
-				match.match.hidden = true;
-				FileManager.ExportFile(matches);
-			});
+					if(match.deviations != null) {
+						insideScroll.remove(match.deviations);
+					}
 
-			insideScroll.add(match.matchNum,   new GridBagConstraints(0, y, 1, 1, 1.0, 0.0, 
-					GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(4, 2, 0, 1), 0, 0));
-			insideScroll.add(match.matchLabel, new GridBagConstraints(1, y, 1, 1, 1.0, 0.0, 
-					GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(4, 1, 0, 1), 0, 0));
-			insideScroll.add(match.delete,     new GridBagConstraints(2, y, 1, 1, 1.0, 0.0, 
-					GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(4, 1, 0, 2), 0, 0));
+					insideScroll.revalidate();
+					insideScroll.repaint();
 
-			y++;
+					match.match.hidden = true;
+					FileManager.ExportFile(matches);
+				});
 
-			if(match.deviations != null) {
-				insideScroll.add(match.deviations, new GridBagConstraints(0, y, 3, 1, 1.0, 0.0, 
-						GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(4, 1, 0, 2), 0, 0));
+				insideScroll.add(match.matchNum,   new GridBagConstraints(0, y, 1, 1, 0.0, 0.0, 
+						GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(4, 2, 0, 1), 0, 0));
+				insideScroll.add(match.matchLabel, new GridBagConstraints(1, y, 1, 1, 1.0, 0.0, 
+						GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(4, 1, 0, 1), 0, 0));
+				insideScroll.add(match.delete,     new GridBagConstraints(2, y, 1, 1, 0.0, 0.0, 
+						GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(4, 1, 0, 2), 0, 0));
+
+				y++;
+
+				if(match.deviations != null) {
+					insideScroll.add(match.deviations, new GridBagConstraints(1, y, 1, 1, 1.0, 0.0, 
+							GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(4, 1, 0, 2), 0, 0));
+				}
+
+				y++;
 			}
-
-			y++;
 		}
 
 		add(setUpInput(), BorderLayout.CENTER);
@@ -93,7 +98,7 @@ public class ResultsWindow extends JFrame {
 
 		JPanel deviations;
 
-		JMButton delete = new JMButton("×");
+		JMButton delete = new JMButton(" X ");
 
 		public MatchUI(Match match) {
 			this.match = match;
@@ -101,13 +106,11 @@ public class ResultsWindow extends JFrame {
 			this.matchLabel = new JMTextArea(match.searchedOn.trim());
 			this.matchNum   = new JMTextField(match.numMatches + "");
 
-			this.matchLabel.setLineWrap(true);
-			this.matchLabel.setWrapStyleWord(true);
-			this.matchLabel.setOpaque(false);
 			this.matchLabel.setEditable(false);
 			this.matchLabel.setFont(new JLabel().getFont());
 
 			this.matchNum.setEditable(false);
+			this.matchNum.setMinimumSize(new Dimension(15, 10));
 
 			setLayout(new BorderLayout());
 
@@ -144,34 +147,22 @@ public class ResultsWindow extends JFrame {
 
 		public JPanel makeDeviationsPanel() throws Exception {
 			if(match.matches.size() >= 1) {
-				JPanel deviationsPanel = new JPanel() {
-					private static final long serialVersionUID = 7154275559452566982L;
-
-					@Override
-					public void paintComponent(Graphics g) {
-						super.paintComponent(g);
-						Graphics2D g2d = (Graphics2D) g;
-						g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-						int w = getWidth();
-						int h = getHeight();
-						Color color1 = Color.decode("#f1f3f4");
-						Color color2 = Color.decode("#dee1e6");
-						GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
-						g2d.setPaint(gp);
-						g2d.fillRect(0, 0, w, h);
-					}
-				};
+				JMFocusablePanel deviationsPanel = new JMFocusablePanel();
 				deviationsPanel.setLayout(new GridBagLayout());
 
 				int y = 0;
 
-				for(String m : match.matches) {					
-					deviationsPanel.add(new JLabel(m), new GridBagConstraints(0, y++, 1, 1, 1.0, 0.0, 
-							GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, 
-							new Insets(2, 15, 0, 2), 0, 0));
+				for(String m : match.matches) {
+					if(!m.trim().toLowerCase().equals(match.searchedOn.trim().toLowerCase())) {
+						deviationsPanel.add(new JLabel(m), new GridBagConstraints(0, y++, 1, 1, 1.0, 0.0, 
+								GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, 
+								new Insets(2, 0, 0, 2), 0, 0));
+					}
 				}
 
-				return deviationsPanel;
+				if(y != 0) {
+					return deviationsPanel;
+				}
 			}
 
 			throw new Exception("No panel necessary, m8!");

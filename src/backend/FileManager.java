@@ -36,7 +36,7 @@ public class FileManager {
 //		matches.add(matchTwo);
 //
 //		ExportFile(matches);
-//		ImportFile();
+		
 		UnDiplcateRunner.setLookAndFeel();
 		
 		new ResultsWindow(ImportFile());

@@ -4,77 +4,50 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Stack;
 
 import javax.swing.BorderFactory;
-import javax.swing.JTextArea;
 import javax.swing.Timer;
 
-public class JMTextArea extends JTextArea {
-	private static final long serialVersionUID = -2346021547935315452L;
-
-	private Boolean copyContentOnDoubleClick = false;
-
-	private Boolean replaceSlashWithDash = false;
-
-	private Boolean hasClicked = false;
+public class JMFocusablePanel extends JMPanel {
+	private static final long serialVersionUID = -1875609067721697622L;
 
 	private Color borderColor = JMColor.DEFAULT_BORDER_COLOR;
 
-	private Stack<UndoString> undoArray = new Stack<UndoString>();
-
 	private Timer fadeTimer;
 
-	public JMTextArea() {
-		setupTextField();
+	public JMFocusablePanel() {
+		setUpPanel();
 	}
 
-	public JMTextArea(String s) {
-		super(s);
-		setupTextField();
-	}
-
-	public JMTextArea(String s, Boolean replaceSlashWithDash) {
-		super(s);
-
-		this.replaceSlashWithDash = replaceSlashWithDash;
-
-		setupTextField();
-	}
-
-	private void setupTextField() {
-		copyContentsOnDoubleClick();
-		selectAllWhenFocused();
-		trimPastedStrings();
+	private void setUpPanel() {
 		setBackground(JMColor.DEFAULT_BACKGROUND);
 		setForeground(JMColor.DEFAULT_FONT_COLOR);
 
-		setLineWrap(true);
-		setWrapStyleWord(true);
-		
 		createBorder(Color.LIGHT_GRAY);
 
+		setFocusable(true);
+		
+		addMouseListener(new MouseAdapter() {			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				requestFocus();
+			}
+		});
+		
 		addFocusListener(new FocusListener() {
 			@Override
 			public void focusGained(FocusEvent arg0) {
-				hasClicked = true;
 				new ColorFader().fadeColor(JMColor.HOVER_BORDER_COLOR, 0);
 			}
 
 			@Override
 			public void focusLost(FocusEvent arg0) {
-				hasClicked = false;
 				new ColorFader().fadeColor(JMColor.DEFAULT_BORDER_COLOR, 0);
 			}
 		});
@@ -89,87 +62,6 @@ public class JMTextArea extends JTextArea {
 		setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
 		repaint();
-	}
-
-	/**
-	 * Copies the entered text when user double-clicks.
-	 */
-	private void copyContentsOnDoubleClick() {
-		addMouseListener(new MouseAdapter() {				
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if(copyContentOnDoubleClick) {
-					if(e.getClickCount() == 2) {
-						Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
-								new StringSelection(getText()), null);
-						select(0, 0);
-					} else if(hasFocus() && hasClicked) {
-						selectAll();
-						hasClicked = false;
-					}
-				}
-			}
-		});
-	}
-
-	/**
-	 * Trims the whitespace off of strings that are pasted into the program.
-	 */
-	private void trimPastedStrings() {
-		addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent arg0) {
-				if(arg0.isControlDown()) {
-					if(arg0.getKeyCode() == KeyEvent.VK_V) {
-						arg0.consume();
-						setText(Tools.getCopiedText().trim());
-
-						if(replaceSlashWithDash) {
-							setText(Tools.getCopiedText().trim().replace("/", "-"));
-						}
-					}
-				} else {
-					undoArray.push(new UndoString(getText(), getCaretPosition()));
-				}
-			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-				if(e.isControlDown()) {
-					if(e.getKeyCode() == KeyEvent.VK_Z && !undoArray.isEmpty()) {
-						UndoString latestUndo = undoArray.pop();
-
-						setText(latestUndo.undoString);
-						setCaretPosition(latestUndo.undoInt);
-					} else if(e.getKeyCode() == KeyEvent.VK_Y) {
-						//TODO Redo
-					}
-
-					e.consume();
-				}
-			}
-
-			@Override
-			public void keyTyped(KeyEvent e) {
-
-
-			}
-		});
-	}
-
-	/**
-	 * Selects all text when the text field receives focus.
-	 */
-	private void selectAllWhenFocused() {
-		addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusLost(FocusEvent arg0) {
-				int caretPosn = getCaretPosition();
-
-				setText(getText().trim());
-				setCaretPosition(caretPosn);
-			}
-		});
 	}
 
 	@Override
@@ -268,4 +160,5 @@ public class JMTextArea extends JTextArea {
 			return new Color(rgb[0], rgb[1], rgb[2]);
 		}
 	}
+	
 }

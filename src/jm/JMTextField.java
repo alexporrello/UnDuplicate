@@ -57,7 +57,7 @@ public class JMTextField extends JTextField {
 		trimPastedStrings();
 		setBackground(JMColor.DEFAULT_BACKGROUND);
 		setForeground(JMColor.DEFAULT_FONT_COLOR);
-
+		
 		createBorder(Color.LIGHT_GRAY);
 
 		addFocusListener(new FocusListener() {

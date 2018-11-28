@@ -41,6 +41,8 @@ public class UnDuplicate {
 		
 		Collections.sort(allMatches);
 		
+		//TODO make it so the user chooses where the file goes.
+		FileManager.ExportFile(allMatches);
 		new ResultsWindow(allMatches);
 	}
 
