@@ -55,6 +55,10 @@ public class UnDuplicate {
 	public ArrayList<Match> findDuplicates(String input, String delims) {
 		HashMap<String, ArrayList<String>> matches = new HashMap<String, ArrayList<String>>();
 		
+		//Sentences are split by period; however, e.g. was effing everything up.
+		//Don't worry, it's put back in later.
+		input.replaceAll("e.g.", "e#g#");
+		
 		String[] split = input.split(delims);
 		
 		for(int j = 0; j < split.length; j++) {

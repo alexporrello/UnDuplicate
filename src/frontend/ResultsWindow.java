@@ -103,7 +103,7 @@ public class ResultsWindow extends JFrame {
 		public MatchUI(Match match) {
 			this.match = match;
 
-			this.matchLabel = new JMTextArea(match.searchedOn.trim());
+			this.matchLabel = new JMTextArea(match.searchedOn.replaceAll("e#g#", "e.g.").trim());
 			this.matchNum   = new JMTextField(match.numMatches + "");
 
 			this.matchLabel.setEditable(false);
@@ -125,10 +125,7 @@ public class ResultsWindow extends JFrame {
 			try {
 				deviations = makeDeviationsPanel();
 				add(deviations, BorderLayout.SOUTH);
-			} catch (Exception e) {
-				e.printStackTrace();
-				System.err.println("Deviations panel not added.");				
-			}
+			} catch (Exception e) { }
 
 			matchLabel.addMouseListener(new MouseAdapter() {				
 				@Override
@@ -153,8 +150,19 @@ public class ResultsWindow extends JFrame {
 				int y = 0;
 
 				for(String m : match.matches) {
-					if(!m.trim().toLowerCase().equals(match.searchedOn.trim().toLowerCase())) {
-						deviationsPanel.add(new JLabel(m), new GridBagConstraints(0, y++, 1, 1, 1.0, 0.0, 
+					if(!m.trim().toLowerCase().equals(match.searchedOn.replaceAll("e#g#", "e.g.").trim().toLowerCase())) {
+						JLabel deviation = new JLabel(m);
+						deviation.addMouseListener(new MouseAdapter() {							
+							@Override
+							public void mouseClicked(MouseEvent e) {
+								if(e.getClickCount() == 2) {
+									Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+									clipboard.setContents(new StringSelection(m), null);
+								}
+							}
+						});
+						
+						deviationsPanel.add(deviation, new GridBagConstraints(0, y++, 1, 1, 1.0, 0.0, 
 								GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, 
 								new Insets(2, 0, 0, 2), 0, 0));
 					}
