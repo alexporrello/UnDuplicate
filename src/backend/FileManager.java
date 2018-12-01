@@ -18,35 +18,18 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import frontend.ResultsWindow;
-import main.UnDiplcateRunner;
-
 
 public class FileManager {
 
-	public static void main(String[] args) {
-//		ArrayList<String> exampleOne = new ArrayList<String>();
-//		exampleOne.add("The quick brown fox!");
-//
-//		Match matchOne = new Match("The quick brown fox.", false, exampleOne);
-//		Match matchTwo = new Match("Jumps over the lazy dog.", false, new ArrayList<String>());
-//
-//		ArrayList<Match> matches = new ArrayList<Match>();
-//		matches.add(matchOne);
-//		matches.add(matchTwo);
-//
-//		ExportFile(matches);
-		
-		UnDiplcateRunner.setLookAndFeel();
-		
-		new ResultsWindow(ImportFile());
-	}
-
 	public static ArrayList<Match> ImportFile() {
+		return ImportFile(System.getProperty("user.home") + "/Desktop/duplicates.xml");
+	}
+	
+	public static ArrayList<Match> ImportFile(String url) {
 		ArrayList<Match> matches = new ArrayList<Match>();
 
 		try {
-			File fXmlFile = new File(System.getProperty("user.home") + "/Desktop/duplicates.xml");
+			File fXmlFile = new File(url);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(fXmlFile);
@@ -83,8 +66,12 @@ public class FileManager {
 
 		return matches;
 	}
-
+	
 	public static void ExportFile(ArrayList<Match> matches) {
+		ExportFile(matches, System.getProperty("user.home") + "/Desktop/duplicates.xml");
+	}
+
+	public static void ExportFile(ArrayList<Match> matches, String saveTo) {
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -137,7 +124,7 @@ public class FileManager {
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(new File(System.getProperty("user.home") + "/Desktop/duplicates.xml"));
+			StreamResult result = new StreamResult(new File(saveTo));
 
 			transformer.transform(source, result);
 		} catch (ParserConfigurationException pce) {

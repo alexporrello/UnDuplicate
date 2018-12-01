@@ -12,27 +12,34 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import backend.FileManager;
 import backend.Match;
 import jm.JMButton;
 import jm.JMFocusablePanel;
 import jm.JMPanel;
-import jm.JMScrollPane;
 import jm.JMTextArea;
 import jm.JMTextField;
 
-public class ResultsWindow extends JFrame {
+public class ResultsWindow extends JMPanel {
 	private static final long serialVersionUID = -6023620346742595500L;
 
-	private JMPanel insideScroll = new JMPanel();
-
+	private String url = System.getProperty("user.home") + "/Desktop/duplicates.xml";
+	
 	public ResultsWindow(ArrayList<Match> matches) {
-		insideScroll.setLayout(new GridBagLayout());
+		makeResultsWindow(matches);
+	}
+	
+	public ResultsWindow(ArrayList<Match> matches, String url) {
+		this.url = url;
+		
+		makeResultsWindow(matches);
+	}
+	
+	private void makeResultsWindow(ArrayList<Match> matches) {
+		setLayout(new GridBagLayout());
 
 		int y = 0;
 
@@ -41,50 +48,38 @@ public class ResultsWindow extends JFrame {
 				MatchUI match = new MatchUI(m);
 
 				match.delete.addActionListener(e -> {
-					insideScroll.remove(match.matchNum);
-					insideScroll.remove(match.matchLabel);
-					insideScroll.remove(match.delete);
+					remove(match.matchNum);
+					remove(match.matchLabel);
+					remove(match.delete);
 
 					if(match.deviations != null) {
-						insideScroll.remove(match.deviations);
+						remove(match.deviations);
 					}
 
-					insideScroll.revalidate();
-					insideScroll.repaint();
+					revalidate();
+					repaint();
 
 					match.match.hidden = true;
-					FileManager.ExportFile(matches);
+					FileManager.ExportFile(matches, url);
 				});
 
-				insideScroll.add(match.matchNum,   new GridBagConstraints(0, y, 1, 1, 0.0, 0.0, 
+				add(match.matchNum,   new GridBagConstraints(0, y, 1, 1, 0.0, 0.0, 
 						GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(4, 2, 0, 1), 0, 0));
-				insideScroll.add(match.matchLabel, new GridBagConstraints(1, y, 1, 1, 1.0, 0.0, 
+				add(match.matchLabel, new GridBagConstraints(1, y, 1, 1, 1.0, 0.0, 
 						GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(4, 1, 0, 1), 0, 0));
-				insideScroll.add(match.delete,     new GridBagConstraints(2, y, 1, 1, 0.0, 0.0, 
+				add(match.delete,     new GridBagConstraints(2, y, 1, 1, 0.0, 0.0, 
 						GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(4, 1, 0, 2), 0, 0));
 
 				y++;
 
 				if(match.deviations != null) {
-					insideScroll.add(match.deviations, new GridBagConstraints(1, y, 1, 1, 1.0, 0.0, 
+					add(match.deviations, new GridBagConstraints(1, y, 1, 1, 1.0, 0.0, 
 							GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(4, 1, 0, 2), 0, 0));
 				}
 
 				y++;
 			}
 		}
-
-		add(setUpInput(), BorderLayout.CENTER);
-
-		setSize(new Dimension(700, 500));
-		setLocationByPlatform(true);
-		setVisible(true);
-	}
-
-	private JScrollPane setUpInput() {
-		JMScrollPane scroll = new JMScrollPane(insideScroll);
-		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);		
-		return scroll;
 	}
 
 	public class MatchUI extends JMPanel {

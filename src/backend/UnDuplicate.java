@@ -1,10 +1,11 @@
 package backend;
 
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import frontend.FileChooser;
 import frontend.ResultsWindow;
 
 public class UnDuplicate {
@@ -26,6 +27,8 @@ public class UnDuplicate {
 	/** Only strings greater than the given length will be checked for duplicates. **/
 	private int minCompareLength;
 	
+	public ResultsWindow resultsWindow;
+	
 	/**
 	 * Locates duplicate text in a given string.
 	 * @param input the input string to be checked for duplicates
@@ -39,11 +42,14 @@ public class UnDuplicate {
 		
 		this.allMatches = findDuplicates(input, combineDelims(delims));
 		
-		Collections.sort(allMatches);
-		
-		//TODO make it so the user chooses where the file goes.
-		FileManager.ExportFile(allMatches);
-		new ResultsWindow(allMatches);
+		try {
+			String exportURL = FileChooser.saveXML();
+			FileManager.ExportFile(this.allMatches, exportURL);
+			resultsWindow = new ResultsWindow(this.allMatches, exportURL);
+		} catch (NoSuchFileException e) {
+			FileManager.ExportFile(allMatches);
+			resultsWindow = new ResultsWindow(allMatches);
+		}
 	}
 
 	/**

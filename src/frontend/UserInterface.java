@@ -1,136 +1,86 @@
 package frontend;
 
 import java.awt.BorderLayout;
-import java.util.ArrayList;
+import java.nio.file.NoSuchFileException;
 
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JScrollPane;
 
-import backend.Delimiter;
+import backend.FileManager;
 import backend.UnDuplicate;
 import jm.JMButton;
+import jm.JMPanel;
 import jm.JMScrollPane;
 import jm.JMTextArea;
 
 public class UserInterface extends JFrame {
 	private static final long serialVersionUID = -9021319552711782577L;
-	
-	private JMButton button = new JMButton("Find Duplicates");
-	
-	private JMTextArea input = new JMTextArea();
-	
-	private UnDiplicateMenu menuBar = new UnDiplicateMenu();
-	
+
+	private UnDuplicateMenu menuBar = new UnDuplicateMenu();
+
+	private JMPanel processingWindow = new JMPanel();
+
+	private JMScrollPane resultsWindow;
+
 	public UserInterface() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(450, 450);
 		setLayout(new BorderLayout());
 		setJMenuBar(menuBar);
+		setSize(450, 450);
+
+		add(makeInputPanel(), BorderLayout.CENTER);
 		
-		add(setUpInput(),  BorderLayout.CENTER);
-		add(setUpButton(), BorderLayout.SOUTH);
-				
+		addActionsToMenuBar();
+		
 		setVisible(true);
 	}
-	
-	private JScrollPane setUpInput() {
+
+	/** Creates the panel by which a user adds the text to analyze. **/
+	private JMPanel makeInputPanel() {
+		JMTextArea input = new JMTextArea();
 		JMScrollPane scroll = new JMScrollPane(input);
 		scroll.setHorizontalScrollBarPolicy(JMScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
 		
-		return scroll;
-	}
-	
-	private JMButton setUpButton() {
-		button = new JMButton("Find Duplicates");
-		
-		button.addActionListener(e -> {
-			new UnDuplicate(input.getText(), 5, 10, menuBar.getSelectedDelims());
+		JMButton runUndiplicate = new JMButton("Find Duplicates");
+		runUndiplicate.addActionListener(e -> {
+			addResultsWindow(new UnDuplicate(input.getText(), 5, 10, menuBar.getSelectedDelims()).resultsWindow);
 		});
 		
-		return button;
+		processingWindow.setLayout(new BorderLayout());
+		processingWindow.add(scroll, BorderLayout.CENTER);
+		processingWindow.add(runUndiplicate, BorderLayout.SOUTH);
+		
+		return processingWindow;
 	}
 	
-	public class UnDiplicateMenu extends JMenuBar {
-		private static final long serialVersionUID = -8381487169056702349L;
+	/** Adds actions to buttons in the MenuBar. **/
+	private void addActionsToMenuBar() {
+		menuBar.fileMenu.open.addActionListener(e -> {
+			try {
+				String file = FileChooser.openXML();
+				addResultsWindow(new ResultsWindow(FileManager.ImportFile(file), file));
+			} catch (NoSuchFileException e1) {
+				e1.printStackTrace();
+			}
+		});
+	}
 
-		public Settings settingsMenu = new Settings();
-		
-		public UnDiplicateMenu() {
-			setBorder(BorderFactory.createEmptyBorder());
-			
-			add(settingsMenu);
+	private void addResultsWindow(ResultsWindow rw) {
+		remove(processingWindow);
+
+		if(resultsWindow != null) {
+			remove(resultsWindow);
 		}
-		
-		public Delimiter[] getSelectedDelims() {
-			return settingsMenu.selectedDelims();
-		}
-		
-		public class Settings extends JMenu {
-			private static final long serialVersionUID = -1272025294155087559L;
-			
-			public JMenu delimiters;
-			
-			JCheckBoxMenuItem newLine;
-			JCheckBoxMenuItem period;
-			JCheckBoxMenuItem space;
-			JCheckBoxMenuItem comma;
-			JCheckBoxMenuItem colon;
-			JCheckBoxMenuItem semiColon;
-			JCheckBoxMenuItem questionMark;
-			JCheckBoxMenuItem exclamationPoint;
-			
-			public Settings() {
-				super("Settings");
-				
-				add(setUpDelimitersMenu());
-			}
-			
-			private JMenu setUpDelimitersMenu() {
-				delimiters = new JMenu("Delimiters");
-				
-				newLine = new JCheckBoxMenuItem("New Line");
-				period = new JCheckBoxMenuItem("Period");
-				space = new JCheckBoxMenuItem("Space");
-				comma = new JCheckBoxMenuItem("Comma");
-				colon = new JCheckBoxMenuItem("Colon");
-				semiColon = new JCheckBoxMenuItem("Semi-colon");
-				questionMark = new JCheckBoxMenuItem("Qustion Mark");
-				exclamationPoint = new JCheckBoxMenuItem("Exclamation Point");
-				
-				delimiters.add(newLine);
-				delimiters.add(period);
-				delimiters.add(space);
-				delimiters.add(comma);
-				delimiters.add(colon);
-				delimiters.add(semiColon);
-				delimiters.add(questionMark);
-				delimiters.add(exclamationPoint);
-				
-				newLine.setSelected(true);
-				period.setSelected(true);
-				
-				return delimiters;
-			}
-			
-			public Delimiter[] selectedDelims() {
-				ArrayList<Delimiter> delims = new ArrayList<Delimiter>();
-				
-				if(newLine.isSelected()) delims.add(Delimiter.NEW_LINE);
-				if(period.isSelected()) delims.add(Delimiter.PERIOD);
-				if(space.isSelected()) delims.add(Delimiter.SPACE);
-				if(comma.isSelected()) delims.add(Delimiter.COMMA);
-				if(colon.isSelected()) delims.add(Delimiter.COLON);
-				if(semiColon.isSelected()) delims.add(Delimiter.SEMI_COLON);
-				if(questionMark.isSelected()) delims.add(Delimiter.QUESTION_MARK);
-				if(exclamationPoint.isSelected()) delims.add(Delimiter.EXCLAMATION_POINT);
-				
-				return delims.toArray(new Delimiter[delims.size()]);
-			}
-		}
+
+		add(setUpScroll(rw));
+
+		revalidate();
+		repaint();
+	}
+
+	private JScrollPane setUpScroll(ResultsWindow results) {
+		resultsWindow = new JMScrollPane(results);
+		resultsWindow.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);		
+		return resultsWindow;
 	}
 }
