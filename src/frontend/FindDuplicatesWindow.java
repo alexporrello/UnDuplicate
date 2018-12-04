@@ -76,6 +76,9 @@ public class FindDuplicatesWindow extends JFrame {
 		menuBar.fileMenu.generateExample.addActionListener(e -> {
 			input.setText(exampleText());
 		});
+		menuBar.fileMenu.processText.addActionListener(e -> {
+			addProcessingWindow();
+		});
 	}
 
 	private void addResultsWindow(ResultsWindow rw) {
@@ -85,8 +88,21 @@ public class FindDuplicatesWindow extends JFrame {
 			remove(resultsWindow);
 		}
 
-		add(setUpScroll(rw));
+		add(setUpScroll(rw), BorderLayout.CENTER);
 
+		revalidate();
+		repaint();
+	}
+	
+	private void addProcessingWindow() {
+		remove(processingWindow);
+		
+		if(resultsWindow != null) {
+			remove(resultsWindow);
+		}
+
+		add(processingWindow, BorderLayout.CENTER);
+		
 		revalidate();
 		repaint();
 	}

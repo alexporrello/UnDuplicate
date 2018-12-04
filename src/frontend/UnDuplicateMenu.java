@@ -31,12 +31,17 @@ public class UnDuplicateMenu extends JMenuBar {
 		private static final long serialVersionUID = 9210779921126243883L;
 
 		JMenuItem open = new JMenuItem("Open File...");
+		JMenuItem processText = new JMenuItem("Open Text Processing Screen");
 		JMenuItem generateExample = new JMenuItem("Generate Example Text");
 		
 		public File() {
 			super("File");
 
 			add(open);
+			
+			addSeparator();
+			
+			add(processText);
 			
 			addSeparator();
 			
