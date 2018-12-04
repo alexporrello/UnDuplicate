@@ -10,6 +10,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
@@ -18,10 +19,10 @@ import javax.swing.JPanel;
 import backend.FileManager;
 import backend.Match;
 import jm.JMButton;
+import jm.JMColor;
 import jm.JMFocusablePanel;
 import jm.JMPanel;
 import jm.JMTextArea;
-import jm.JMTextField;
 
 public class ResultsWindow extends JMPanel {
 	private static final long serialVersionUID = -6023620346742595500L;
@@ -30,12 +31,18 @@ public class ResultsWindow extends JMPanel {
 	
 	public ResultsWindow(ArrayList<Match> matches) {
 		makeResultsWindow(matches);
+		setOpaque(false);
+		setBackground(JMColor.DEFAULT_BACKGROUND);
 	}
 	
 	public ResultsWindow(ArrayList<Match> matches, String url) {
 		this.url = url;
 		
 		makeResultsWindow(matches);
+	}
+	
+	private void removeMatchFromPanel(ResultRow rw) {
+		rw.removeFromJMPanel(this);
 	}
 	
 	private void makeResultsWindow(ArrayList<Match> matches) {
@@ -45,39 +52,42 @@ public class ResultsWindow extends JMPanel {
 
 		for(Match m : matches) {
 			if(!m.hidden) {
-				MatchUI match = new MatchUI(m);
+				ResultRow match = new ResultRow(m);
 
-				match.delete.addActionListener(e -> {
-					remove(match.matchNum);
-					remove(match.matchLabel);
-					remove(match.delete);
+				match.hide.addMouseListener(new MouseAdapter() {					
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						removeMatchFromPanel(match);
+						
+						if(match.deviations != null) {
+							remove(match.deviations);
+						}
 
-					if(match.deviations != null) {
-						remove(match.deviations);
+						revalidate();
+						repaint();
+
+						m.hidden = true;
+						FileManager.ExportFile(matches, url);
 					}
-
-					revalidate();
-					repaint();
-
-					match.match.hidden = true;
-					FileManager.ExportFile(matches, url);
 				});
 
-				add(match.matchNum,   new GridBagConstraints(0, y, 1, 1, 0.0, 0.0, 
-						GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(4, 2, 0, 1), 0, 0));
-				add(match.matchLabel, new GridBagConstraints(1, y, 1, 1, 1.0, 0.0, 
-						GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(4, 1, 0, 1), 0, 0));
-				add(match.delete,     new GridBagConstraints(2, y, 1, 1, 0.0, 0.0, 
-						GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(4, 1, 0, 2), 0, 0));
+				y = match.addToJMPanel(this, y);
+				
+//				add(match.matchNum,   new GridBagConstraints(0, y, 1, 1, 0.0, 0.0, 
+//						GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(4, 2, 0, 1), 0, 0));
+//				add(match.matchLabel, new GridBagConstraints(1, y, 1, 1, 1.0, 0.0, 
+//						GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(4, 1, 0, 1), 0, 0));
+//				add(match.delete,     new GridBagConstraints(2, y, 1, 1, 0.0, 0.0, 
+//						GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(4, 1, 0, 2), 0, 0));
 
-				y++;
+//				y++;
 
-				if(match.deviations != null) {
-					add(match.deviations, new GridBagConstraints(1, y, 1, 1, 1.0, 0.0, 
-							GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(4, 1, 0, 2), 0, 0));
-				}
+//				if(match.deviations != null) {
+//					add(match.deviations, new GridBagConstraints(1, y, 1, 1, 1.0, 0.0, 
+//							GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(4, 1, 0, 2), 0, 0));
+//				}
 
-				y++;
+//				y++;
 			}
 		}
 	}

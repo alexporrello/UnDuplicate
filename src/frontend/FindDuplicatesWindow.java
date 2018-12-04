@@ -29,6 +29,15 @@ public class FindDuplicatesWindow extends JFrame {
 	private JMTextArea input = new JMTextArea();
 	
 	public FindDuplicatesWindow() {
+		completeSetUp();
+	}
+	
+	public FindDuplicatesWindow(String url) {
+		completeSetUp();
+		addResultsWindow(new ResultsWindow(FileManager.ImportFile(url), url));
+	}
+	
+	public void completeSetUp() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
 		setJMenuBar(menuBar);

@@ -1,4 +1,4 @@
-package jm;
+package frontend;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -20,6 +20,9 @@ import java.util.Stack;
 import javax.swing.BorderFactory;
 import javax.swing.JTextField;
 import javax.swing.Timer;
+
+import jm.JMColor;
+import jm.Tools;
 
 public class JMTextField extends JTextField {
 	private static final long serialVersionUID = -2346021547935315452L;
