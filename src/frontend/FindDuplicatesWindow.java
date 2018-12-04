@@ -13,7 +13,7 @@ import jm.JMPanel;
 import jm.JMScrollPane;
 import jm.JMTextArea;
 
-public class UserInterface extends JFrame {
+public class FindDuplicatesWindow extends JFrame {
 	private static final long serialVersionUID = -9021319552711782577L;
 
 	private UnDuplicateMenu menuBar = new UnDuplicateMenu();
@@ -22,7 +22,7 @@ public class UserInterface extends JFrame {
 
 	private JMScrollPane resultsWindow;
 
-	public UserInterface() {
+	public FindDuplicatesWindow() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
 		setJMenuBar(menuBar);

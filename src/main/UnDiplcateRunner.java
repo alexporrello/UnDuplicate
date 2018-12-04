@@ -3,7 +3,7 @@ package main;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import frontend.UserInterface;
+import frontend.FindDuplicatesWindow;
 
 public class UnDiplcateRunner {
 	public static void setLookAndFeel() {
@@ -18,6 +18,6 @@ public class UnDiplcateRunner {
 	public static void main(String[] args) {
 		setLookAndFeel();
 		
-		new UserInterface();
+		new FindDuplicatesWindow();
 	}
 }
