@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
@@ -139,8 +140,10 @@ public class ResultRow {
 
 		setUpComponent(hide, 0, 8);
 	}
-	
+
 	private void setupDeviations(Match m) {
+		int outsideBorder = 6;
+		
 		deviations = new JMPanel() {
 			private static final long serialVersionUID = -8148145318501362948L;
 
@@ -154,12 +157,30 @@ public class ResultRow {
 				gg.drawLine(0, getHeight()-1, getWidth(), getHeight()-1); // Bottom
 
 				gg.setColor(JMColor.DEFAULT_BORDER_COLOR);
-				gg.drawLine(6, 0, getWidth()-6, 0);
+				gg.drawLine(outsideBorder, 0, getWidth()-outsideBorder, 0);
 			}
 		};
-		
-		setUpComponent(deviations, 6, 6);
-		
+
+		setUpComponent(deviations, 4, outsideBorder+3, 4, outsideBorder+3);
+
+		deviations.setLayout(new GridBagLayout());
+
+		int y = 0;
+
+		for(String s : m.matches) {
+			if(!s.trim().equals(m.searchedOn.trim())) {
+				JTextArea found = new JTextArea(s);
+				found.setFont(new JLabel().getFont());
+				found.setLineWrap(true);
+				found.setWrapStyleWord(true);
+
+				deviations.add(found, 
+						new GridBagConstraints(0, y++, 1, 1, 1.0, 0.0, 
+								GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0), 0, 0));
+			}
+		}
+
+
 		deviations.setVisible(false);
 	}
 
@@ -178,18 +199,20 @@ public class ResultRow {
 		hide.repaint();
 		showMore.repaint();
 		deviations.repaint();
-	}	
+	}
 
 	private void setUpComponent(JComponent jc, int left, int right) {
+		setUpComponent(jc, 6, left, 6, right);
+	}
+
+	private void setUpComponent(JComponent jc, int top, int left, int bottom, int right) {
 		jc.setOpaque(true);
 		jc.setBackground(JMColor.DEFAULT_BACKGROUND);
 		jc.setForeground(JMColor.DEFAULT_FONT_COLOR);
 		jc.setFocusable(true);
-		
-		createBorder(jc, Color.LIGHT_GRAY, left, right);
 
-		
-		
+		createBorder(jc, Color.LIGHT_GRAY, top, left, bottom, right);
+
 		jc.addMouseListener(new MouseAdapter() {			
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -209,7 +232,7 @@ public class ResultRow {
 			}
 		});
 	}
-	
+
 	public void removeFromJMPanel(JMPanel panel) {
 		panel.remove(numMatches);
 		panel.remove(matchingText);
@@ -237,7 +260,7 @@ public class ResultRow {
 		panel.add(hide,
 				new GridBagConstraints(x++, y, 1, 1, 0.0, 0.0, 
 						GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
-		
+
 		if(deviations != null) {
 			y+=1;
 			panel.add(deviations,
@@ -252,9 +275,9 @@ public class ResultRow {
 	 * Sets the border for this JTextField.
 	 * @param borderColor is the color of the border.
 	 */
-	private void createBorder(JComponent jc, Color borderColor, int left, int right) {
+	private void createBorder(JComponent jc, Color borderColor, int top, int left, int bottom, int right) {
 		this.borderColor = borderColor;
-		jc.setBorder(BorderFactory.createEmptyBorder(6, left, 6, right));
+		jc.setBorder(BorderFactory.createEmptyBorder(top, left, bottom, right));
 		jc.repaint();
 	}
 
@@ -342,29 +365,29 @@ public class ResultRow {
 		}
 	}
 
-//	public static void main(String[] args) {
-//		setLookAndFeel();
-//
-//		JFrame frame = new JFrame();
-//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		frame.setSize(new Dimension(300, 300));
-//
-//		JMPanel panel = new JMPanel();
-//
-//		panel.setLayout(new GridBagLayout());
-//
-//		ArrayList<Match> matches = FileManager.ImportFile("C:\\Users\\Alexander\\Desktop\\test.xml");
-//
-//		ResultRow rr = new ResultRow(matches.get(0));
-//		ResultRow rr2 = new ResultRow(matches.get(1));
-//
-//		int y = 0;
-//
-//		y = rr.addToJMPanel(panel, y);
-//		y = rr2.addToJMPanel(panel, y);
-//
-//		frame.add(panel);
-//		frame.setVisible(true);
-//	}
+	//	public static void main(String[] args) {
+	//		setLookAndFeel();
+	//
+	//		JFrame frame = new JFrame();
+	//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	//		frame.setSize(new Dimension(300, 300));
+	//
+	//		JMPanel panel = new JMPanel();
+	//
+	//		panel.setLayout(new GridBagLayout());
+	//
+	//		ArrayList<Match> matches = FileManager.ImportFile("C:\\Users\\Alexander\\Desktop\\test.xml");
+	//
+	//		ResultRow rr = new ResultRow(matches.get(0));
+	//		ResultRow rr2 = new ResultRow(matches.get(1));
+	//
+	//		int y = 0;
+	//
+	//		y = rr.addToJMPanel(panel, y);
+	//		y = rr2.addToJMPanel(panel, y);
+	//
+	//		frame.add(panel);
+	//		frame.setVisible(true);
+	//	}
 
 }
