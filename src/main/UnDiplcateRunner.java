@@ -18,6 +18,6 @@ public class UnDiplcateRunner {
 	public static void main(String[] args) {
 		setLookAndFeel();
 		
-		new FindDuplicatesWindow("C:\\Users\\Alexander\\Desktop\\test.xml");
+		new FindDuplicatesWindow("C:\\Users\\porrello\\Desktop\\test.xml");
 	}
 }

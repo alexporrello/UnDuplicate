@@ -1,11 +1,9 @@
 package frontend;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
@@ -14,18 +12,15 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import backend.FileManager;
 import backend.Match;
 import jm.JMColor;
 import jm.JMPanel;
@@ -72,9 +67,6 @@ public class ResultRow {
 		};
 
 		setUpComponent(numMatches, 8, 8);
-
-		numMatches.setOpaque(true);
-		numMatches.setBackground(JMColor.DEFAULT_BACKGROUND);
 	}
 
 	private void setupMatchingText(Match m) {
@@ -118,35 +110,12 @@ public class ResultRow {
 
 		setUpComponent(showMore, 8, 8);
 
-		showMore.setOpaque(true);
-		showMore.setBackground(JMColor.DEFAULT_BACKGROUND);
 		showMore.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				deviations.setVisible(!deviations.isVisible());
 			}
 		});
-	}
-
-	private void setupDeviations(Match m) {
-		deviations = new JMPanel() {
-			private static final long serialVersionUID = -8148145318501362948L;
-
-			@Override
-			public void paintComponent(Graphics g) {
-				super.paintComponent(g);
-				Graphics2D gg = setupG2(g);
-
-				gg.drawLine(0, 0, 0, getHeight());
-				gg.drawLine(getWidth()-1, 0, getWidth()-1, getHeight());
-				gg.drawLine(0, getHeight()-1, getWidth(), getHeight()-1);
-
-				gg.setColor(JMColor.DEFAULT_BORDER_COLOR);
-				gg.drawLine(6, 0, getWidth()-6, 0);
-			}
-		};
-		deviations.setVisible(false);
-		deviations.setBackground(JMColor.DEFAULT_BACKGROUND);
 	}
 
 	private void setupHideButton(Match m) {
@@ -156,24 +125,42 @@ public class ResultRow {
 			@Override
 			public void paintComponent(Graphics g) {
 				super.paintComponent(g);
+				Graphics2D gg = setupG2(g);
 
-				Graphics2D gg = (Graphics2D) g;
-				gg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-				gg.setColor(borderColor);
-				gg.drawLine(0,            0,             getWidth(),   0);
-				gg.drawLine(getWidth()-1, 0,             getWidth()-1, getHeight());
+				gg.drawLine(0, 0, getWidth(), 0); // Top
+				gg.drawLine(getWidth()-1, 0, getWidth()-1, getHeight()); // Right
 
 				if(!deviations.isVisible()) {
-					gg.drawLine(0,            getHeight()-1, getWidth(),   getHeight()-1);
+					gg.drawLine(0, getHeight()-1, getWidth(), getHeight()-1); // Bottom
 				}
 			}
 
 		};
 
 		setUpComponent(hide, 0, 8);
+	}
+	
+	private void setupDeviations(Match m) {
+		deviations = new JMPanel() {
+			private static final long serialVersionUID = -8148145318501362948L;
 
-		hide.setOpaque(true);
-		hide.setBackground(JMColor.DEFAULT_BACKGROUND);
+			@Override
+			public void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				Graphics2D gg = setupG2(g);
+
+				gg.drawLine(0, 0, 0, getHeight()); // Left
+				gg.drawLine(getWidth()-1, 0, getWidth()-1, getHeight()); // Right
+				gg.drawLine(0, getHeight()-1, getWidth(), getHeight()-1); // Bottom
+
+				gg.setColor(JMColor.DEFAULT_BORDER_COLOR);
+				gg.drawLine(6, 0, getWidth()-6, 0);
+			}
+		};
+		
+		setUpComponent(deviations, 6, 6);
+		
+		deviations.setVisible(false);
 	}
 
 	private Graphics2D setupG2(Graphics g) {
@@ -190,16 +177,19 @@ public class ResultRow {
 		matchingText.repaint();
 		hide.repaint();
 		showMore.repaint();
+		deviations.repaint();
 	}	
 
 	private void setUpComponent(JComponent jc, int left, int right) {
+		jc.setOpaque(true);
 		jc.setBackground(JMColor.DEFAULT_BACKGROUND);
 		jc.setForeground(JMColor.DEFAULT_FONT_COLOR);
-
+		jc.setFocusable(true);
+		
 		createBorder(jc, Color.LIGHT_GRAY, left, right);
 
-		jc.setFocusable(true);
-
+		
+		
 		jc.addMouseListener(new MouseAdapter() {			
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -247,11 +237,11 @@ public class ResultRow {
 		panel.add(hide,
 				new GridBagConstraints(x++, y, 1, 1, 0.0, 0.0, 
 						GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
-
+		
 		if(deviations != null) {
 			y+=1;
 			panel.add(deviations,
-					new GridBagConstraints(0, y, 4, 1, 1.0, 1.0, 
+					new GridBagConstraints(0, y, x, 1, 1.0, 1.0, 
 							GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
 		}
 
@@ -265,7 +255,6 @@ public class ResultRow {
 	private void createBorder(JComponent jc, Color borderColor, int left, int right) {
 		this.borderColor = borderColor;
 		jc.setBorder(BorderFactory.createEmptyBorder(6, left, 6, right));
-
 		jc.repaint();
 	}
 
@@ -353,29 +342,29 @@ public class ResultRow {
 		}
 	}
 
-	public static void main(String[] args) {
-		setLookAndFeel();
-
-		JFrame frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(new Dimension(300, 300));
-
-		JMPanel panel = new JMPanel();
-
-		panel.setLayout(new GridBagLayout());
-
-		ArrayList<Match> matches = FileManager.ImportFile("C:\\Users\\Alexander\\Desktop\\test.xml");
-
-		ResultRow rr = new ResultRow(matches.get(0));
-		ResultRow rr2 = new ResultRow(matches.get(1));
-
-		int y = 0;
-
-		y = rr.addToJMPanel(panel, y);
-		y = rr2.addToJMPanel(panel, y);
-
-		frame.add(panel);
-		frame.setVisible(true);
-	}
+//	public static void main(String[] args) {
+//		setLookAndFeel();
+//
+//		JFrame frame = new JFrame();
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		frame.setSize(new Dimension(300, 300));
+//
+//		JMPanel panel = new JMPanel();
+//
+//		panel.setLayout(new GridBagLayout());
+//
+//		ArrayList<Match> matches = FileManager.ImportFile("C:\\Users\\Alexander\\Desktop\\test.xml");
+//
+//		ResultRow rr = new ResultRow(matches.get(0));
+//		ResultRow rr2 = new ResultRow(matches.get(1));
+//
+//		int y = 0;
+//
+//		y = rr.addToJMPanel(panel, y);
+//		y = rr2.addToJMPanel(panel, y);
+//
+//		frame.add(panel);
+//		frame.setVisible(true);
+//	}
 
 }

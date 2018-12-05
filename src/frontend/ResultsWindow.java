@@ -10,7 +10,6 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
@@ -72,22 +71,6 @@ public class ResultsWindow extends JMPanel {
 				});
 
 				y = match.addToJMPanel(this, y);
-				
-//				add(match.matchNum,   new GridBagConstraints(0, y, 1, 1, 0.0, 0.0, 
-//						GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(4, 2, 0, 1), 0, 0));
-//				add(match.matchLabel, new GridBagConstraints(1, y, 1, 1, 1.0, 0.0, 
-//						GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(4, 1, 0, 1), 0, 0));
-//				add(match.delete,     new GridBagConstraints(2, y, 1, 1, 0.0, 0.0, 
-//						GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(4, 1, 0, 2), 0, 0));
-
-//				y++;
-
-//				if(match.deviations != null) {
-//					add(match.deviations, new GridBagConstraints(1, y, 1, 1, 1.0, 0.0, 
-//							GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(4, 1, 0, 2), 0, 0));
-//				}
-
-//				y++;
 			}
 		}
 	}
