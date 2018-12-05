@@ -47,8 +47,7 @@ public class FileManager {
 					ArrayList<String> deviations = new ArrayList<String>();
 
 					for(String s : eElement.getElementsByTagName("deviations").item(0).getTextContent().split("###")) {
-						if(s.length() > 0) {
-							System.out.println(s);
+						if(s.length() > 0 && !s.trim().equals(eElement.getElementsByTagName("matching-text").item(0).getTextContent())) {
 							deviations.add(s);
 						}
 					}

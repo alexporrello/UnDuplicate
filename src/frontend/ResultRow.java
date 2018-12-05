@@ -39,14 +39,21 @@ public class ResultRow {
 
 	JMPanel   deviations;
 
+	Boolean showDeviations = true;
+
 	public ResultRow(Match m) {
 
 		setupNumMatches(m);
 		setupMatchingText(m);
+		setupShowMore(m);
 
 		if(m.matches.size() > 0) {
-			setupShowMore(m);
 			setupDeviations(m);	
+		} else {
+			showDeviations = false;
+			deviations = new JMPanel();
+			deviations.setVisible(false);
+			showMore.setForeground(JMColor.DISABLED_BACKGROUND_COLOR);
 		}
 
 		setupHideButton(m);
@@ -63,7 +70,7 @@ public class ResultRow {
 
 				gg.drawLine(0, 0, getWidth(), 0); // Top
 				gg.drawLine(0, 0, 0, getHeight()); // Left
-				if(!deviations.isVisible()) gg.drawLine(0, getHeight()-1, getWidth(), getHeight()-1); // Bottom
+				if(!deviations.isVisible() || !showDeviations) gg.drawLine(0, getHeight()-1, getWidth(), getHeight()-1); // Bottom
 			}
 		};
 
@@ -80,7 +87,7 @@ public class ResultRow {
 				Graphics2D gg = setupG2(g);
 
 				gg.drawLine(0, 0, getWidth(), 0); // Top
-				if(!deviations.isVisible()) gg.drawLine(0, getHeight()-1, getWidth(),   getHeight()-1); // bottom
+				if(!deviations.isVisible() || !showDeviations) gg.drawLine(0, getHeight()-1, getWidth(),   getHeight()-1); // bottom
 
 				gg.setColor(JMColor.DEFAULT_BORDER_COLOR);
 				gg.drawLine(0, 6, 0, getHeight()-6); // Left padding border
@@ -105,7 +112,7 @@ public class ResultRow {
 				Graphics2D gg = setupG2(g);
 
 				gg.drawLine(0, 0, getWidth(), 0); // Top
-				if(!deviations.isVisible()) gg.drawLine(0, getHeight()-1, getWidth(), getHeight()-1); // bottom
+				if(!deviations.isVisible() || !showDeviations) gg.drawLine(0, getHeight()-1, getWidth(), getHeight()-1); // bottom
 			}
 		};
 
@@ -114,7 +121,9 @@ public class ResultRow {
 		showMore.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				deviations.setVisible(!deviations.isVisible());
+				if(showDeviations) {
+					deviations.setVisible(!deviations.isVisible());
+				}
 			}
 		});
 	}
@@ -131,7 +140,7 @@ public class ResultRow {
 				gg.drawLine(0, 0, getWidth(), 0); // Top
 				gg.drawLine(getWidth()-1, 0, getWidth()-1, getHeight()); // Right
 
-				if(!deviations.isVisible()) {
+				if(!deviations.isVisible() || !showDeviations) {
 					gg.drawLine(0, getHeight()-1, getWidth(), getHeight()-1); // Bottom
 				}
 			}
@@ -143,7 +152,7 @@ public class ResultRow {
 
 	private void setupDeviations(Match m) {
 		int outsideBorder = 6;
-		
+
 		deviations = new JMPanel() {
 			private static final long serialVersionUID = -8148145318501362948L;
 
