@@ -4,9 +4,11 @@ import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import backend.FileManager;
 import backend.Match;
+import backend.MatchSort;
 import jm.JMColor;
 import jm.JMPanel;
 
@@ -15,27 +17,54 @@ public class ResultsWindow extends JMPanel {
 
 	private String url = System.getProperty("user.home") + "/Desktop/duplicates.xml";
 	
+	private ArrayList<Match> matches;
+	
+	private MatchSort sortMethod = MatchSort.NONE;
+	
 	public ResultsWindow(ArrayList<Match> matches) {
-		makeResultsWindow(matches);
+		this.matches = matches;
+		
+		setLayout(new GridBagLayout());
 		setOpaque(false);
 		setBackground(JMColor.DEFAULT_BACKGROUND);
+		
+		makeResultsWindow();
 	}
 	
 	public ResultsWindow(ArrayList<Match> matches, String url) {
 		this.url = url;
+		this.matches = matches;
 		
-		makeResultsWindow(matches);
+		setLayout(new GridBagLayout());
+		setOpaque(false);
+		setBackground(JMColor.DEFAULT_BACKGROUND);
+		
+		makeResultsWindow();
 	}
 	
 	private void removeMatchFromPanel(ResultRow rw) {
 		rw.removeFromJMPanel(this);
 	}
 	
-	private void makeResultsWindow(ArrayList<Match> matches) {
-		setLayout(new GridBagLayout());
-
+	public void changeSortMethod(MatchSort sortMethod) {
+		this.sortMethod = sortMethod;
+		
+		for(Match m : matches) {
+			m.sortBy = this.sortMethod;
+		}
+		
+		if(sortMethod != MatchSort.NONE) {
+			Collections.sort(matches);
+		}
+		
+		makeResultsWindow();
+	}
+	
+	private void makeResultsWindow() {
+		this.removeAll();
+		
 		int y = 0;
-
+		
 		for(Match m : matches) {
 			if(!m.hidden) {
 				ResultRow match = new ResultRow(m);
@@ -60,5 +89,8 @@ public class ResultsWindow extends JMPanel {
 				y = match.addToJMPanel(this, y);
 			}
 		}
+		
+		revalidate();
+		repaint();
 	}
 }

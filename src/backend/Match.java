@@ -17,6 +17,8 @@ public class Match implements Comparable<Match> {
 	
 	public boolean hidden;
 	
+	public MatchSort sortBy = MatchSort.NONE;
+	
 	public Match(String searchedOn, Boolean hidden, ArrayList<String> matches) {
 		this.numMatches = matches.size();
 		this.searchedOn = searchedOn;
@@ -44,6 +46,12 @@ public class Match implements Comparable<Match> {
 
 	@Override
 	public int compareTo(Match o) {
-		return (Integer.valueOf(o.numMatches)).compareTo(Integer.valueOf(numMatches));
+		if(sortBy == MatchSort.NUM_MATCHES) {
+			return (Integer.valueOf(o.numMatches)).compareTo(Integer.valueOf(numMatches));
+		} else if(sortBy == MatchSort.TEXT_LENGTH) {
+			return (Integer.valueOf(o.searchedOn.length())).compareTo(Integer.valueOf(searchedOn.length()));
+		} else {
+			return 0;
+		}
 	}
 }

@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
 import backend.FileManager;
+import backend.MatchSort;
 import backend.UnDuplicate;
 import jm.JMButton;
 import jm.JMLabel;
@@ -26,17 +27,19 @@ public class FindDuplicatesWindow extends JFrame {
 
 	private JMScrollPane resultsWindow;
 
-	private JMTextArea input = new JMTextArea();
+	private ResultsWindow mainResultsWindow;
 	
+	private JMTextArea input = new JMTextArea();
+
 	public FindDuplicatesWindow() {
 		completeSetUp();
 	}
-	
+
 	public FindDuplicatesWindow(String url) {
 		completeSetUp();
 		addResultsWindow(new ResultsWindow(FileManager.ImportFile(url), url));
 	}
-	
+
 	public void completeSetUp() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
@@ -44,11 +47,11 @@ public class FindDuplicatesWindow extends JFrame {
 		setSize(450, 450);
 
 		input.setFont(new JMLabel("").getFont());
-		
+
 		add(makeInputPanel(), BorderLayout.CENTER);
-		
+
 		addActionsToMenuBar();
-		
+
 		setVisible(true);
 	}
 
@@ -57,12 +60,12 @@ public class FindDuplicatesWindow extends JFrame {
 		input.setText("");
 		JMScrollPane scroll = new JMScrollPane(input);
 		scroll.setHorizontalScrollBarPolicy(JMScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		
+
 		JMButton runUndiplicate = new JMButton("Find Duplicates");
 		runUndiplicate.addActionListener(e -> {
 			UnDuplicate results = new UnDuplicate(input.getText(), 5, 10, menuBar.getSelectedDelims());
 			ResultsWindow resultsWindow;
-			
+
 			try {
 				String exportURL = FileChooser.saveXML();
 				FileManager.ExportFile(results.allMatches, exportURL);
@@ -71,19 +74,19 @@ public class FindDuplicatesWindow extends JFrame {
 				FileManager.ExportFile(results.allMatches);
 				resultsWindow = new ResultsWindow(results.allMatches);
 			}
-			
+
 			addResultsWindow(resultsWindow);
 		});
-		
+
 		processingWindow.setLayout(new GridBagLayout());
 		processingWindow.add(scroll,
 				new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,       new Insets(5,5,5,5), 0, 0));
 		processingWindow.add(runUndiplicate,
 				new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5), 0, 0));
-		
+
 		return processingWindow;
 	}
-	
+
 	/** Adds actions to buttons in the MenuBar. **/
 	private void addActionsToMenuBar() {
 		menuBar.fileMenu.open.addActionListener(e -> {
@@ -100,6 +103,17 @@ public class FindDuplicatesWindow extends JFrame {
 		menuBar.fileMenu.processText.addActionListener(e -> {
 			addProcessingWindow();
 		});
+
+		menuBar.fileMenu.changeSort.numMatches.addActionListener(e -> {
+			this.mainResultsWindow.changeSortMethod(MatchSort.NUM_MATCHES);
+		});
+		//TODO This should reset to the pre-sorted order. Record document posn.
+		menuBar.fileMenu.changeSort.none.addActionListener(e -> {
+			this.mainResultsWindow.changeSortMethod(MatchSort.NONE);
+		});
+		menuBar.fileMenu.changeSort.textLength.addActionListener(e -> {
+			this.mainResultsWindow.changeSortMethod(MatchSort.TEXT_LENGTH);
+		});
 	}
 
 	private void addResultsWindow(ResultsWindow rw) {
@@ -109,31 +123,33 @@ public class FindDuplicatesWindow extends JFrame {
 			remove(resultsWindow);
 		}
 
-		add(setUpScroll(rw), BorderLayout.CENTER);
+		this.mainResultsWindow = rw;
+		
+		add(setUpScroll(), BorderLayout.CENTER);
 
 		revalidate();
 		repaint();
 	}
-	
+
 	private void addProcessingWindow() {
 		remove(processingWindow);
-		
+
 		if(resultsWindow != null) {
 			remove(resultsWindow);
 		}
 
 		add(processingWindow, BorderLayout.CENTER);
-		
+
 		revalidate();
 		repaint();
 	}
 
-	private JScrollPane setUpScroll(ResultsWindow results) {
-		resultsWindow = new JMScrollPane(results);
+	private JScrollPane setUpScroll() {
+		resultsWindow = new JMScrollPane(this.mainResultsWindow);
 		resultsWindow.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);		
 		return resultsWindow;
 	}
-	
+
 	private String exampleText() {
 		return "Lorem ipsum dolor sit amet, consectetur adipiscing elit, "
 				+ "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "

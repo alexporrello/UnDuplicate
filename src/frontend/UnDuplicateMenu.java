@@ -33,19 +33,38 @@ public class UnDuplicateMenu extends JMenuBar {
 		JMenuItem open = new JMenuItem("Open File...");
 		JMenuItem processText = new JMenuItem("Open Text Processing Screen");
 		JMenuItem generateExample = new JMenuItem("Generate Example Text");
+
+		ChangeSortMenu changeSort = new ChangeSortMenu();
 		
 		public File() {
 			super("File");
 
 			add(open);
-			
+
 			addSeparator();
-			
+
 			add(processText);
+			add(changeSort);
 			
 			addSeparator();
-			
+
 			add(generateExample);
+		}
+
+		public class ChangeSortMenu extends JMenu {
+			private static final long serialVersionUID = -8269980835818019418L;
+
+			public JMenuItem none = new JMenuItem("No Sort");
+			public JMenuItem numMatches = new JMenuItem("Number of Duplicates");
+			public JMenuItem textLength = new JMenuItem("Length of Duplicate String");
+			
+			public ChangeSortMenu() {
+				super("Change Sort Order");
+				
+				add(none);
+				add(numMatches);
+				add(textLength);
+			}
 		}
 	}
 
