@@ -1,12 +1,8 @@
 package backend;
 
-import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-
-import frontend.FileChooser;
-import frontend.ResultsWindow;
 
 public class UnDuplicate {
 
@@ -14,7 +10,7 @@ public class UnDuplicate {
 	private HashSet<String> checked = new HashSet<String>();
 	
 	/** Contains all of the found matches. **/
-	private ArrayList<Match> allMatches;
+	public ArrayList<Match> allMatches;
 	
 	/**
 	 * Determines the required level of similarity
@@ -26,8 +22,6 @@ public class UnDuplicate {
 	
 	/** Only strings greater than the given length will be checked for duplicates. **/
 	private int minCompareLength;
-	
-	public ResultsWindow resultsWindow;
 	
 	/**
 	 * Locates duplicate text in a given string.
@@ -41,15 +35,6 @@ public class UnDuplicate {
 		this.minCompareLength  = minCompareLength;
 		
 		this.allMatches = findDuplicates(input, combineDelims(delims));
-		
-		try {
-			String exportURL = FileChooser.saveXML();
-			FileManager.ExportFile(this.allMatches, exportURL);
-			resultsWindow = new ResultsWindow(this.allMatches, exportURL);
-		} catch (NoSuchFileException e) {
-			FileManager.ExportFile(allMatches);
-			resultsWindow = new ResultsWindow(allMatches);
-		}
 	}
 
 	/**

@@ -60,7 +60,19 @@ public class FindDuplicatesWindow extends JFrame {
 		
 		JMButton runUndiplicate = new JMButton("Find Duplicates");
 		runUndiplicate.addActionListener(e -> {
-			addResultsWindow(new UnDuplicate(input.getText(), 5, 10, menuBar.getSelectedDelims()).resultsWindow);
+			UnDuplicate results = new UnDuplicate(input.getText(), 5, 10, menuBar.getSelectedDelims());
+			ResultsWindow resultsWindow;
+			
+			try {
+				String exportURL = FileChooser.saveXML();
+				FileManager.ExportFile(results.allMatches, exportURL);
+				resultsWindow = new ResultsWindow(results.allMatches, exportURL);
+			} catch (NoSuchFileException f) {
+				FileManager.ExportFile(results.allMatches);
+				resultsWindow = new ResultsWindow(results.allMatches);
+			}
+			
+			addResultsWindow(resultsWindow);
 		});
 		
 		processingWindow.setLayout(new GridBagLayout());
