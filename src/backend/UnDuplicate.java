@@ -2,16 +2,15 @@ package backend;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class UnDuplicate {
 
-	/** Contains all of the array pairs that have been checked for duplicates. **/
-	private HashSet<String> checked = new HashSet<String>();
-	
 	/** Contains all of the found matches. **/
 	public ArrayList<Match> allMatches;
-	
+
+	/** Gets set to "true" if the pair has been checked. **/
+	boolean[][] memoize; 
+
 	/**
 	 * Determines the required level of similarity
 	 * that is required for two strings to be considered a "match."
@@ -19,10 +18,10 @@ public class UnDuplicate {
 	 * strings have to be in order to be considered a "match."
 	 */
 	private int desiredSimilarity;
-	
+
 	/** Only strings greater than the given length will be checked for duplicates. **/
 	private int minCompareLength;
-	
+
 	/**
 	 * Locates duplicate text in a given string.
 	 * @param input the input string to be checked for duplicates
@@ -33,7 +32,7 @@ public class UnDuplicate {
 	public UnDuplicate(String input, int desiredSimilarity, int minCompareLength, Delimiter[] delims) {
 		this.desiredSimilarity = desiredSimilarity;
 		this.minCompareLength  = minCompareLength;
-		
+
 		this.allMatches = findDuplicates(input, combineDelims(delims));
 	}
 
@@ -44,67 +43,70 @@ public class UnDuplicate {
 	 * @return the results of the duplicate search.
 	 */
 	public ArrayList<Match> findDuplicates(String input, String delims) {
-		HashMap<String, ArrayList<String>> matches = new HashMap<String, ArrayList<String>>();
-		
 		//Sentences are split by period; however, e.g. was effing everything up.
 		//Don't worry, it's put back in later.
-		input.replaceAll("e.g.", "e#g#");
-		
+		input = input.replaceAll("e.g.", "e#g#");
+
 		String[] split = input.split(delims);
-		
-		for(int j = 0; j < split.length; j++) {
 
-			System.out.println("Completed: " + j + " of " + split.length);
+		memoize = new boolean[split.length][split.length];
 
-			for(int k = 0; k < split.length; k++) {
-				if(j != k) {
-					if(!hashed(j, k)){
-						if(split[j].length() > minCompareLength && split[k].length() > minCompareLength) {
-							if(StringUtils.computeLevenshteinDistance(split[j], split[k]) < desiredSimilarity) {		
-								if(!matches.containsKey(split[j])) {
-									matches.put(split[j], new ArrayList<String>());
-								}
-
-								matches.get(split[j]).add(split[k].trim());
-							}
-						}
-					}
-				}
-			}
-		}
+		HashMap<String, ArrayList<String>> matches = searchForDuplicates(split);
 
 		ArrayList<Match> allMatches = new ArrayList<Match>();
-		
+
 		for(String s : matches.keySet()) {
 			allMatches.add(new Match(s, false, matches.get(s)));
 		}
 
 		return allMatches;
 	}
-	
-	/**
-	 * Hashes all checked pairs.
-	 * @param j the location in array A
-	 * @param k the location in array B
-	 * @return true if the value has already been hashed; else, false.
-	 */
-	public boolean hashed(int j, int k) {
-		String hashedValue;
 
-		if(j < k) {
-			hashedValue = j + "," + k;
-		} else {
-			hashedValue = k + "," + j;
+	/**
+	 * Searches a given array for duplicate and near-duplicate strings.
+	 * @param split the array that will be checked for duplicates.
+	 * @return all of found duplicates.
+	 */
+	public HashMap<String, ArrayList<String>> searchForDuplicates(String[] split) {
+		memoize = new boolean[split.length][split.length];
+
+		HashMap<String, ArrayList<String>> matches = new HashMap<String, ArrayList<String>>();
+
+		for(int a = 0; a < split.length; a++) {
+			System.out.println("Completed: " + a + " of " + split.length);
+
+			for(int b = 0; b < split.length; b++) {				
+				if(!memoize[a][b] && !memoize[b][a]) {
+					computeMatch(split[a], split[b], matches, a, b);
+					memoize[a][b] = true;
+					memoize[b][a] = true;
+				}
+			}
 		}
 
-		if(checked.contains(hashedValue)) {
-			return true;
-		} else {
-			checked.add(hashedValue);
-			return false;
+		return matches;
+	}
+
+	/**
+	 * Computes whether to strings are a match and remembers all matches. 
+	 * @param left the first string to be checked.
+	 * @param right the second string to be checked.
+	 * @param matches the object that will remember the matches.
+	 * @param j the left array int.
+	 * @param k the right array int.
+	 */
+	private void computeMatch(String left, String right, HashMap<String, ArrayList<String>> matches, int j, int k) {
+		if(left.length() > minCompareLength && right.length() > minCompareLength && j != k) {
+			if(StringUtils.computeLevenshteinDistance(left, right) < desiredSimilarity) {
+				if(!matches.containsKey(left)) {
+					matches.put(left, new ArrayList<String>());
+				}
+
+				matches.get(left).add(right.trim());
+			}
 		}
 	}
-	
+
 	/**
 	 * Combines a given array of Delimiters for splitting a string.
 	 * @param delims the given array of Delimiters
@@ -116,7 +118,7 @@ public class UnDuplicate {
 		for(Delimiter d : delims) {
 			delim = delim + "|" + d.delim;
 		}
-		
+
 		return delim.substring(1, delim.length());
 	}
 }
