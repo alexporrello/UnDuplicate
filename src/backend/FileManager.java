@@ -56,6 +56,7 @@ public class FileManager {
 							new Match(
 									eElement.getElementsByTagName("matching-text").item(0).getTextContent(), 
 									Boolean.parseBoolean(eElement.getElementsByTagName("hidden").item(0).getTextContent()), 
+									Integer.parseInt(eElement.getElementsByTagName("doc-posn").item(0).getTextContent()),
 									deviations));
 				}
 			}
@@ -106,6 +107,11 @@ public class FileManager {
 				Element hidden = doc.createElement("hidden");
 				hidden.appendChild(doc.createTextNode(m.hidden + ""));
 				staff.appendChild(hidden);
+				
+				// number of duplicates elements
+				Element posn = doc.createElement("doc-posn");
+				posn.appendChild(doc.createTextNode(m.docPosn + ""));
+				staff.appendChild(posn);
 
 				// deviations elements
 				String deviations = "";

@@ -55,8 +55,10 @@ public class UnDuplicate {
 
 		ArrayList<Match> allMatches = new ArrayList<Match>();
 
+		int i = 0;
+		
 		for(String s : matches.keySet()) {
-			allMatches.add(new Match(s, false, matches.get(s)));
+			allMatches.add(new Match(s, false, i++, matches.get(s)));
 		}
 
 		return allMatches;

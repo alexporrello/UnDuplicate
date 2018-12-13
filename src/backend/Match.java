@@ -15,12 +15,15 @@ public class Match implements Comparable<Match> {
 	
 	public int numMatches;
 	
+	public int docPosn;
+	
 	public boolean hidden;
 	
 	public MatchSort sortBy = MatchSort.NONE;
 	
-	public Match(String searchedOn, Boolean hidden, ArrayList<String> matches) {
+	public Match(String searchedOn, Boolean hidden, int docPosn, ArrayList<String> matches) {
 		this.numMatches = matches.size();
+		this.docPosn    = docPosn;
 		this.searchedOn = searchedOn;
 		this.hidden     = hidden;
 		

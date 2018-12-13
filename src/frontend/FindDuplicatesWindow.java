@@ -107,10 +107,11 @@ public class FindDuplicatesWindow extends JFrame {
 		menuBar.fileMenu.changeSort.numMatches.addActionListener(e -> {
 			this.mainResultsWindow.changeSortMethod(MatchSort.NUM_MATCHES);
 		});
-		//TODO This should reset to the pre-sorted order. Record document posn.
-		menuBar.fileMenu.changeSort.none.addActionListener(e -> {
+		
+		menuBar.fileMenu.changeSort.original.addActionListener(e -> {
 			this.mainResultsWindow.changeSortMethod(MatchSort.NONE);
 		});
+		
 		menuBar.fileMenu.changeSort.textLength.addActionListener(e -> {
 			this.mainResultsWindow.changeSortMethod(MatchSort.TEXT_LENGTH);
 		});

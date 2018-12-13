@@ -54,14 +54,14 @@ public class UnDuplicateMenu extends JMenuBar {
 		public class ChangeSortMenu extends JMenu {
 			private static final long serialVersionUID = -8269980835818019418L;
 
-			public JMenuItem none = new JMenuItem("No Sort");
+			public JMenuItem original   = new JMenuItem("Original Non-Sorted Order");
 			public JMenuItem numMatches = new JMenuItem("Number of Duplicates");
 			public JMenuItem textLength = new JMenuItem("Length of Duplicate String");
 			
 			public ChangeSortMenu() {
 				super("Change Sort Order");
 				
-				add(none);
+				add(original);
 				add(numMatches);
 				add(textLength);
 			}
