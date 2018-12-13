@@ -32,10 +32,14 @@ public class FindDuplicatesWindow extends JFrame {
 	private JMTextArea input = new JMTextArea();
 
 	public FindDuplicatesWindow() {
+		super("UnDuplicate");
+		
 		completeSetUp();
 	}
 
 	public FindDuplicatesWindow(String url) {
+		super("UnDuplicate");
+		
 		completeSetUp();
 		addResultsWindow(new ResultsWindow(FileManager.ImportFile(url), url));
 	}
