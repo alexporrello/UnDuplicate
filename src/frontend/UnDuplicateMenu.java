@@ -7,6 +7,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JRadioButtonMenuItem;
 
 import backend.Delimiter;
 
@@ -54,12 +55,30 @@ public class UnDuplicateMenu extends JMenuBar {
 		public class ChangeSortMenu extends JMenu {
 			private static final long serialVersionUID = -8269980835818019418L;
 
-			public JMenuItem original   = new JMenuItem("Original Non-Sorted Order");
-			public JMenuItem numMatches = new JMenuItem("Number of Duplicates");
-			public JMenuItem textLength = new JMenuItem("Length of Duplicate String");
+			public JRadioButtonMenuItem original   = new JRadioButtonMenuItem("Original Non-Sorted Order");
+			public JRadioButtonMenuItem numMatches = new JRadioButtonMenuItem("Number of Duplicates");
+			public JRadioButtonMenuItem textLength = new JRadioButtonMenuItem("Length of Duplicate String");
 			
 			public ChangeSortMenu() {
 				super("Change Sort Order");
+				
+				original.addActionListener(e -> {
+					numMatches.setSelected(false);
+					textLength.setSelected(false);
+					original.setSelected(true);
+				});
+				
+				numMatches.addActionListener(e -> {
+					numMatches.setSelected(true);
+					textLength.setSelected(false);
+					original.setSelected(false);
+				});
+				
+				textLength.addActionListener(e -> {
+					numMatches.setSelected(false);
+					textLength.setSelected(true);
+					original.setSelected(false);
+				});
 				
 				add(original);
 				add(numMatches);

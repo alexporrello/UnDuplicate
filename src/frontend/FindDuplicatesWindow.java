@@ -28,7 +28,7 @@ public class FindDuplicatesWindow extends JFrame {
 	private JMScrollPane resultsWindow;
 
 	private ResultsWindow mainResultsWindow;
-	
+
 	private JMTextArea input = new JMTextArea();
 
 	public FindDuplicatesWindow() {
@@ -105,15 +105,21 @@ public class FindDuplicatesWindow extends JFrame {
 		});
 
 		menuBar.fileMenu.changeSort.numMatches.addActionListener(e -> {
-			this.mainResultsWindow.changeSortMethod(MatchSort.NUM_MATCHES);
+			if(mainResultsWindow != null) {
+				this.mainResultsWindow.changeSortMethod(MatchSort.NUM_MATCHES);
+			}
 		});
-		
+
 		menuBar.fileMenu.changeSort.original.addActionListener(e -> {
-			this.mainResultsWindow.changeSortMethod(MatchSort.NONE);
+			if(mainResultsWindow != null) {
+				this.mainResultsWindow.changeSortMethod(MatchSort.NONE);
+			}
 		});
-		
+
 		menuBar.fileMenu.changeSort.textLength.addActionListener(e -> {
-			this.mainResultsWindow.changeSortMethod(MatchSort.TEXT_LENGTH);
+			if(mainResultsWindow != null) {
+				this.mainResultsWindow.changeSortMethod(MatchSort.TEXT_LENGTH);
+			}
 		});
 	}
 
@@ -125,7 +131,7 @@ public class FindDuplicatesWindow extends JFrame {
 		}
 
 		this.mainResultsWindow = rw;
-		
+
 		add(setUpScroll(), BorderLayout.CENTER);
 
 		revalidate();
