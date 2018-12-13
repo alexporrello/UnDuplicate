@@ -30,16 +30,18 @@ public class FindDuplicatesWindow extends JFrame {
 	private ResultsWindow mainResultsWindow;
 
 	private JMTextArea input = new JMTextArea();
+	
+	private int fidelity = 5;
 
 	public FindDuplicatesWindow() {
 		super("UnDuplicate");
-		
+
 		completeSetUp();
 	}
 
 	public FindDuplicatesWindow(String url) {
 		super("UnDuplicate");
-		
+
 		completeSetUp();
 		addResultsWindow(new ResultsWindow(FileManager.ImportFile(url), url));
 	}
@@ -67,7 +69,7 @@ public class FindDuplicatesWindow extends JFrame {
 
 		JMButton runUndiplicate = new JMButton("Find Duplicates");
 		runUndiplicate.addActionListener(e -> {
-			UnDuplicate results = new UnDuplicate(input.getText(), 5, 10, menuBar.getSelectedDelims());
+			UnDuplicate results = new UnDuplicate(input.getText(), fidelity, 10, menuBar.getSelectedDelims());
 			ResultsWindow resultsWindow;
 
 			try {
@@ -108,22 +110,32 @@ public class FindDuplicatesWindow extends JFrame {
 			addProcessingWindow();
 		});
 
-		menuBar.fileMenu.changeSort.numMatches.addActionListener(e -> {
+		menuBar.settingsMenu.changeSort.numMatches.addActionListener(e -> {
 			if(mainResultsWindow != null) {
 				this.mainResultsWindow.changeSortMethod(MatchSort.NUM_MATCHES);
 			}
 		});
 
-		menuBar.fileMenu.changeSort.original.addActionListener(e -> {
+		menuBar.settingsMenu.changeSort.original.addActionListener(e -> {
 			if(mainResultsWindow != null) {
 				this.mainResultsWindow.changeSortMethod(MatchSort.NONE);
 			}
 		});
 
-		menuBar.fileMenu.changeSort.textLength.addActionListener(e -> {
+		menuBar.settingsMenu.changeSort.textLength.addActionListener(e -> {
 			if(mainResultsWindow != null) {
 				this.mainResultsWindow.changeSortMethod(MatchSort.TEXT_LENGTH);
 			}
+		});
+
+		menuBar.settingsMenu.changeFidelity.high.addActionListener(e -> {
+			this.fidelity = 0;
+		});
+		menuBar.settingsMenu.changeFidelity.med.addActionListener(e -> {
+			this.fidelity = 5;
+		});
+		menuBar.settingsMenu.changeFidelity.low.addActionListener(e -> {
+			this.fidelity = 12;
 		});
 	}
 

@@ -22,6 +22,9 @@ public class UnDuplicate {
 	/** Only strings greater than the given length will be checked for duplicates. **/
 	private int minCompareLength;
 
+	/** If true, strings have to be a perfect match. **/
+	private boolean perfectFidelity = false;
+	
 	/**
 	 * Locates duplicate text in a given string.
 	 * @param input the input string to be checked for duplicates
@@ -33,6 +36,10 @@ public class UnDuplicate {
 		this.desiredSimilarity = desiredSimilarity;
 		this.minCompareLength  = minCompareLength;
 
+		if(desiredSimilarity == 0) {
+			perfectFidelity = true;
+		}
+		
 		this.allMatches = findDuplicates(input, combineDelims(delims));
 	}
 
@@ -99,12 +106,20 @@ public class UnDuplicate {
 	 */
 	private void computeMatch(String left, String right, HashMap<String, ArrayList<String>> matches, int j, int k) {
 		if(left.length() > minCompareLength && right.length() > minCompareLength && j != k) {
-			if(StringUtils.computeLevenshteinDistance(left, right) < desiredSimilarity) {
+			if(!perfectFidelity && StringUtils.computeLevenshteinDistance(left, right) < desiredSimilarity) {
 				if(!matches.containsKey(left)) {
 					matches.put(left, new ArrayList<String>());
 				}
 
 				matches.get(left).add(right.trim());
+			} else {
+				if(left.trim().equals(right.trim())) {
+					if(!matches.containsKey(left)) {
+						matches.put(left, new ArrayList<String>());
+					}
+
+					matches.get(left).add(right.trim());
+				}
 			}
 		}
 	}

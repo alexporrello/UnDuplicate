@@ -35,8 +35,8 @@ public class UnDuplicateMenu extends JMenuBar {
 		JMenuItem processText = new JMenuItem("Open Text Processing Screen");
 		JMenuItem generateExample = new JMenuItem("Generate Example Text");
 
-		ChangeSortMenu changeSort = new ChangeSortMenu();
-		
+
+
 		public File() {
 			super("File");
 
@@ -45,47 +45,10 @@ public class UnDuplicateMenu extends JMenuBar {
 			addSeparator();
 
 			add(processText);
-			add(changeSort);
 			
 			addSeparator();
 
 			add(generateExample);
-		}
-
-		public class ChangeSortMenu extends JMenu {
-			private static final long serialVersionUID = -8269980835818019418L;
-
-			public JRadioButtonMenuItem original   = new JRadioButtonMenuItem("Original Non-Sorted Order");
-			public JRadioButtonMenuItem numMatches = new JRadioButtonMenuItem("Number of Duplicates");
-			public JRadioButtonMenuItem textLength = new JRadioButtonMenuItem("Length of Duplicate String");
-			
-			public ChangeSortMenu() {
-				super("Change Sort Order");
-				
-				original.setSelected(true);
-				
-				original.addActionListener(e -> {
-					numMatches.setSelected(false);
-					textLength.setSelected(false);
-					original.setSelected(true);
-				});
-				
-				numMatches.addActionListener(e -> {
-					numMatches.setSelected(true);
-					textLength.setSelected(false);
-					original.setSelected(false);
-				});
-				
-				textLength.addActionListener(e -> {
-					numMatches.setSelected(false);
-					textLength.setSelected(true);
-					original.setSelected(false);
-				});
-				
-				add(original);
-				add(numMatches);
-				add(textLength);
-			}
 		}
 	}
 
@@ -93,6 +56,10 @@ public class UnDuplicateMenu extends JMenuBar {
 		private static final long serialVersionUID = -1272025294155087559L;
 
 		public JMenu delimiters;
+
+		ChangeSortMenu changeSort = new ChangeSortMenu();
+
+		ChangeFidelityMenu changeFidelity = new ChangeFidelityMenu();
 
 		JCheckBoxMenuItem newLine;
 		JCheckBoxMenuItem period;
@@ -107,6 +74,11 @@ public class UnDuplicateMenu extends JMenuBar {
 			super("Settings");
 
 			add(setUpDelimitersMenu());
+			
+			addSeparator();
+			
+			add(changeFidelity);
+			add(changeSort);
 		}
 
 		private JMenu setUpDelimitersMenu() {
@@ -149,6 +121,78 @@ public class UnDuplicateMenu extends JMenuBar {
 			if(exclamationPoint.isSelected()) delims.add(Delimiter.EXCLAMATION_POINT);
 
 			return delims.toArray(new Delimiter[delims.size()]);
+		}
+
+		public class ChangeFidelityMenu extends JMenu {
+			private static final long serialVersionUID = -678484858349173626L;
+
+			public JRadioButtonMenuItem high = new JRadioButtonMenuItem("High Fidelity");
+			public JRadioButtonMenuItem med  = new JRadioButtonMenuItem("Medium Fidelity");
+			public JRadioButtonMenuItem low  = new JRadioButtonMenuItem("Low Fidelity");
+
+			public ChangeFidelityMenu() {
+				super("Set Fidelity");
+
+				med.setSelected(true);
+
+				med.addActionListener(e -> {
+					high.setSelected(false);
+					low.setSelected(false);
+					med.setSelected(true);
+				});
+
+				high.addActionListener(e -> {
+					high.setSelected(true);
+					low.setSelected(false);
+					med.setSelected(false);
+				});
+
+				low.addActionListener(e -> {
+					high.setSelected(false);
+					low.setSelected(true);
+					med.setSelected(false);
+				});
+
+				add(high);
+				add(med);
+				add(low);
+			}
+		}
+
+		public class ChangeSortMenu extends JMenu {
+			private static final long serialVersionUID = -8269980835818019418L;
+
+			public JRadioButtonMenuItem original   = new JRadioButtonMenuItem("Original Non-Sorted Order");
+			public JRadioButtonMenuItem numMatches = new JRadioButtonMenuItem("Number of Duplicates");
+			public JRadioButtonMenuItem textLength = new JRadioButtonMenuItem("Length of Duplicate String");
+
+			public ChangeSortMenu() {
+				super("Change Sort Order");
+
+				original.setSelected(true);
+
+				original.addActionListener(e -> {
+					numMatches.setSelected(false);
+					textLength.setSelected(false);
+					original.setSelected(true);
+				});
+
+				numMatches.addActionListener(e -> {
+					numMatches.setSelected(true);
+					textLength.setSelected(false);
+					original.setSelected(false);
+				});
+
+				textLength.addActionListener(e -> {
+					numMatches.setSelected(false);
+					textLength.setSelected(true);
+					original.setSelected(false);
+				});
+
+				add(original);
+				add(numMatches);
+				add(textLength);
+			}
 		}
 	}
 }
