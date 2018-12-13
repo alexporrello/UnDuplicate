@@ -62,6 +62,8 @@ public class UnDuplicateMenu extends JMenuBar {
 			public ChangeSortMenu() {
 				super("Change Sort Order");
 				
+				original.setSelected(true);
+				
 				original.addActionListener(e -> {
 					numMatches.setSelected(false);
 					textLength.setSelected(false);
