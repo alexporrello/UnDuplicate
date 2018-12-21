@@ -24,7 +24,7 @@ public class UnDuplicate {
 
 	/** If true, strings have to be a perfect match. **/
 	private boolean perfectFidelity = false;
-	
+
 	/**
 	 * Locates duplicate text in a given string.
 	 * @param input the input string to be checked for duplicates
@@ -39,7 +39,7 @@ public class UnDuplicate {
 		if(desiredSimilarity == 0) {
 			perfectFidelity = true;
 		}
-		
+
 		this.allMatches = findDuplicates(input, combineDelims(delims));
 	}
 
@@ -63,7 +63,7 @@ public class UnDuplicate {
 		ArrayList<Match> allMatches = new ArrayList<Match>();
 
 		int i = 0;
-		
+
 		for(String s : matches.keySet()) {
 			allMatches.add(new Match(s, false, i++, matches.get(s)));
 		}
@@ -84,11 +84,16 @@ public class UnDuplicate {
 		for(int a = 0; a < split.length; a++) {
 			System.out.println("Completed: " + a + " of " + split.length);
 
-			for(int b = 0; b < split.length; b++) {				
-				if(!memoize[a][b] && !memoize[b][a]) {
-					computeMatch(split[a], split[b], matches, a, b);
-					memoize[a][b] = true;
-					memoize[b][a] = true;
+			for(int b = 0; b < split.length; b++) {
+
+				if(a != b) {
+					if(!memoize[a][b] && !memoize[b][a]) {
+
+						computeMatch(split[a], split[b], matches, a, b);
+						
+						memoize[a][b] = true;
+						memoize[b][a] = true;
+					}
 				}
 			}
 		}
@@ -105,7 +110,9 @@ public class UnDuplicate {
 	 * @param k the right array int.
 	 */
 	private void computeMatch(String left, String right, HashMap<String, ArrayList<String>> matches, int j, int k) {
-		if(left.length() > minCompareLength && right.length() > minCompareLength && j != k) {
+
+		if(firstCheck(left, right)) {
+			
 			if(!perfectFidelity && StringUtils.computeLevenshteinDistance(left, right) < desiredSimilarity) {
 				if(!matches.containsKey(left)) {
 					matches.put(left, new ArrayList<String>());
@@ -121,7 +128,12 @@ public class UnDuplicate {
 					matches.get(left).add(right.trim());
 				}
 			}
+			
 		}
+	}
+
+	private Boolean firstCheck(String left, String right) {
+		return right.length() > minCompareLength && left.length() > minCompareLength;
 	}
 
 	/**
